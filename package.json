@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "dev": "vue-cli-service serve",
     "build": "vue-cli-service build"
   },
   "dependencies": {
@@ -11,14 +11,15 @@
     "core-js": "^3.6.5",
     "element-ui": "^2.15.1",
     "mavon-editor": "^2.9.1",
-    "node-sass": "^5.0.0",
     "vue": "^2.6.11",
     "vue-router": "^3.5.1"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
-    "sass-loader": "^11.0.1",
+    "node-sass": "^5.0.0",
+    "sass": "^1.32.8",
+    "sass-loader": "^10.1.1",
     "vue-template-compiler": "^2.6.11"
   }
 }
