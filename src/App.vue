@@ -1,6 +1,8 @@
 <template>
   <div id="app">
+    <Header class="header"></Header>
     <router-view></router-view>
+    <Footer></Footer>
   </div>
 </template>
 
@@ -12,4 +14,16 @@ export default {
 </script>
 
 <style>
+@import "assets/css/base.css";
+
+.container {
+  max-width: 80%;
+  margin: 0 auto;
+}
+@media screen and (max-width: 800px) {
+  .container {
+    max-width: 100% !important;
+    margin: 0 auto;
+  }
+}
 </style>

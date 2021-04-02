@@ -1,14 +1,19 @@
 <template>
-  <div><div class="footer"></div></div>
+  <div>
+    <mavon-editor v-model="value" />
+  </div>
 </template>
 
 <script>
 export default {
-  name: "Footer",
+  name: "MarkDownEditor",
   components: {},
   directives: {},
   data() {
-    return {};
+    return {
+      value: "",
+      defaultData: "preview",
+    };
   },
   mounted() {},
   methods: {},
@@ -16,9 +21,4 @@ export default {
 </script>
 
 <style  scoped>
-.footer {
-  width: 100%;
-  height: 100px;
-  background-color: rgba(100, 100, 100, 0.7);
-}
 </style>

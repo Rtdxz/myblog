@@ -1,10 +1,12 @@
 <template>
-  <div><div class="footer"></div></div>
+  <div>
+    <div class="side-bar hidden-sm-and-down"></div>
+  </div>
 </template>
 
 <script>
 export default {
-  name: "Footer",
+  name: "Sidebar",
   components: {},
   directives: {},
   data() {
@@ -15,10 +17,9 @@ export default {
 };
 </script>
 
-<style  scoped>
-.footer {
-  width: 100%;
-  height: 100px;
-  background-color: rgba(100, 100, 100, 0.7);
+<style scoped>
+.side-bar {
+  background-color: orange;
+  height: 600px;
 }
 </style>
