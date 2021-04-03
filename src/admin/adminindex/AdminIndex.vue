@@ -61,33 +61,39 @@ export default {
 };
 </script>
 
-<style  scoped>
-a {
-  text-decoration: none;
-  color: #fff;
-}
-.el-menu-item {
-  text-align: center;
-}
-.back-button {
-  position: absolute;
-  left: 20px;
-  top: 10px;
-}
-.header {
-  position: relative;
-  width: 100%;
-  height: 60px;
-  text-align: center;
-  line-height: 60px;
-  color: #fff;
-  font-size: 20px;
-  background-color: #409eff;
-}
-.home-container {
-  height: 100%;
-}
-.el-aside {
-  background-color: #545c64;
-}
+<style  lang="sass" scoped>
+$black-color: #545c64
+$blue-color: #409eff
+
+a
+  text-decoration: none
+  color: #fff
+
+.el-menu
+  border-right: 0
+
+  &-item
+    text-align: center
+
+.back-button
+  position: absolute
+  left: 20px
+  top: 10px
+
+.header
+  position: relative
+  width: 100%
+  height: 60px
+  text-align: center
+  line-height: 60px
+  color: #fff
+  font-size: 20px
+  background-color: $blue-color
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 12px 0px
+
+.home-container
+  height: 100%
+
+.el-aside
+  background-color: $black-color
 </style>

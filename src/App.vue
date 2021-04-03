@@ -15,6 +15,7 @@ export default {
 
 <style>
 @import "assets/css/base.css";
+@import "assets/css/markdown.css";
 
 .container {
   max-width: 80%;

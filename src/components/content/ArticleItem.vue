@@ -1,15 +1,20 @@
 <template>
   <div>
     <el-container class="article">
-      <el-header class="article-header">{{ article.title }}</el-header>
-
-      <el-main>{{ article.content }}</el-main>
+      <router-link :to="'/article/' + article.id"
+        ><el-header class="article-header">{{
+          article.title
+        }}</el-header></router-link
+      >
+      <el-main v-html="article.describes"></el-main>
       <el-footer>Footer</el-footer>
     </el-container>
   </div>
 </template>
 
 <script>
+import marked from "marked";
+
 export default {
   name: "ArticleItem",
   components: {},
@@ -22,7 +27,8 @@ export default {
       type: Object,
     },
   },
-  mounted() {},
+
+  beforeMount() {},
   methods: {},
 };
 </script>

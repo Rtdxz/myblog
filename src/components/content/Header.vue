@@ -10,7 +10,7 @@
         text-color="#fff"
         active-text-color="#ffd04b"
       >
-        <el-menu-item index="1" @click="moveToOtherPage('home')"
+        <el-menu-item index="1" @click="moveToOtherPage('/home')"
           >首页</el-menu-item
         >
         <el-submenu index="2">
@@ -24,7 +24,7 @@
         <el-menu-item
           index="5"
           class="user-info"
-          @click="moveToOtherPage('admin')"
+          @click="moveToOtherPage('/admin')"
           >登录</el-menu-item
         >
       </el-menu>

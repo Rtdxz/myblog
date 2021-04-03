@@ -8,13 +8,7 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//接收formdata
-const formidableMiddleware = require('express-formidable');
-
-
-app.use(formidableMiddleware());
-
-
+app.use(express.static('public'));
 
 
 const port = 3000

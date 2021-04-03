@@ -12,6 +12,8 @@ import Markdown from '@/admin/markdowneditor/MarkdownEditor'
 import AdminIndex from '@/admin/adminindex/AdminIndex'
 import ArticleManage from '@/admin/articlemanage/ArticleManage'
 
+import ArticleDetail from '@/views/article/ArticleDetail'
+
 
 const routes = [
   {
@@ -39,6 +41,10 @@ const routes = [
         component: ArticleManage
       }
     ]
+  },
+  {
+    path: '/article/:articleId',
+    component: ArticleDetail
   }
 
 
