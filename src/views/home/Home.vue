@@ -9,8 +9,8 @@
           <el-col :sm="24" :md="8"><side-bar></side-bar></el-col>
         </el-row>
       </div>
-      <Footer></Footer>
     </div>
+    <Footer></Footer>
   </div>
 </template>
 
@@ -19,6 +19,7 @@ import Header from "@/components/content/Header";
 import Footer from "@/components/content/Footer";
 import ArticleList from "@/components/content/ArticleList";
 import SideBar from "@/components/content/Sidebar";
+
 export default {
   name: "Home",
   components: {
@@ -31,6 +32,7 @@ export default {
   data() {
     return {};
   },
+  created() {},
   mounted() {},
   methods: {},
 };

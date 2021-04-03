@@ -1,35 +1,64 @@
 <template>
   <div class="article-list">
     <el-row>
-      <el-col :span="24" :key="item.title" v-for="(index, item) in items">
-        <div class="article">
-          <div class="article-header">{{ item.title }}</div>
-          {{ item }}
-        </div>
+      <el-col :span="24" :key="article.title" v-for="article in articles">
+        <article-item :article="article"></article-item>
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
+import "@/assets/js/mock.js";
+
+import ArticleItem from "./ArticleItem";
+
+import { request } from "@/network/request";
+
 export default {
   name: "articleList",
-  components: {},
+  components: {
+    ArticleItem,
+  },
   directives: {},
   data() {
     return {
-      items: [{ title: 1 }, { title: 2 }, { title: 3 }, { title: 4 }],
+      articles: [
+        { title: 1, content: 1 },
+        { title: 2, content: 1 },
+        { title: 3, content: 1 },
+        { title: 4, content: 1 },
+      ],
     };
   },
+  created() {
+    request({
+      method: "get",
+      url: "/api/article/all",
+      /* params: {
+        firstName: "Fred",
+        sss: "sss",
+      }, */
+    }).then((res) => {
+      console.log(res.data.data);
+      this.articles = res.data.data;
+    });
+
+    /* this.$axios
+      .get("/api/test")
+      .then((response) => {
+        //console.log(response.data.data);
+        this.articles = response.data.data;
+      })
+      .catch((error) => {
+        console.log(error);
+      }); */
+  },
   mounted() {},
+
   methods: {},
 };
 </script>
 
 <style scoped>
-.article {
-  margin-bottom: 20px;
-  height: 200px;
-  background-color: rgba(180, 180, 180, 0.5);
-}
 </style>

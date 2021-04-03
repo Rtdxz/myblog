@@ -10,6 +10,8 @@ import Home from '@/views/home/Home'
 
 import Markdown from '@/admin/markdowneditor/MarkdownEditor'
 import AdminIndex from '@/admin/adminindex/AdminIndex'
+import ArticleManage from '@/admin/articlemanage/ArticleManage'
+
 
 const routes = [
   {
@@ -26,7 +28,17 @@ const routes = [
   },
   {
     path: '/admin',
-    component: AdminIndex
+    component: AdminIndex,
+    children: [
+      {
+        path: 'articlewrite',
+        component: Markdown
+      },
+      {
+        path: 'articleManage',
+        component: ArticleManage
+      }
+    ]
   }
 
 
