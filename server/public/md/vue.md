@@ -1847,7 +1847,7 @@ Runtime-Only性能更高，代码更少
 
 **使用Runtime-Only时，前面对组件的template解析就不见了，这件事是交给vue-template-compiler去做的，在编译的时候它就直接将template进行解析了，所以Runtime-only可以直接进行到渲染阶段**
 
-vue-template-compiler：用于将.vue中的<template>解析成render函数
+vue-template-compiler：用于将.vue中的`<template>`解析成render函数
 
 ![Snipaste_2021-03-21_14-04-25](mdimages\Snipaste_2021-03-21_14-04-25.jpg)
 

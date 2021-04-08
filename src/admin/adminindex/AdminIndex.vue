@@ -23,10 +23,14 @@
 
           <el-menu-item index="2">账号管理</el-menu-item>
 
-          <el-menu-item index="3">博客管理</el-menu-item>
+          <el-menu-item
+            index="3"
+            @click="moveToOtherPage('/admin/articleManage')"
+            >博客管理</el-menu-item
+          >
           <el-menu-item
             index="4"
-            @click="moveToOtherPage('/admin/articlewrite')"
+            @click="moveToOtherPage('/admin/articleWrite')"
             >编写博客</el-menu-item
           >
           <!-- <el-menu-item index="4">关于</el-menu-item>

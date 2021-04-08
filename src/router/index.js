@@ -33,7 +33,7 @@ const routes = [
     component: AdminIndex,
     children: [
       {
-        path: 'articlewrite',
+        path: 'articleWrite',
         component: Markdown
       },
       {

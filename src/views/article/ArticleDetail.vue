@@ -2,8 +2,15 @@
   <div>
     <Header></Header>
     <div class="container">
+      <div class="article-header">
+        <h1>{{ article.title }}</h1>
+      </div>
       <div class="padding">
-        <div class="v-html markdown-body" v-html="article.content"></div>
+        <div
+          class="v-html markdown-body"
+          v-html="article.content"
+          v-highlight
+        ></div>
       </div>
     </div>
     <Footer></Footer>
@@ -14,6 +21,8 @@
 import { request } from "@/network/request";
 import Header from "@/components/content/Header";
 import Footer from "@/components/content/Footer";
+
+import "@/assets/js/hljs"; //代码高亮
 
 export default {
   name: "ArticleDetail",
@@ -54,10 +63,23 @@ export default {
   width: 75%;
   margin: 100px auto;
 }
+.article-header {
+  height: 60px;
+  font-size: 30px;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+/* 对v-html里的图片样式设置 */
 .v-html >>> img {
   max-width: 100%;
 }
 .padding {
   padding: 60px;
+}
+@media screen and (max-width: 800px) {
+  .padding {
+    padding: 0;
+  }
 }
 </style>
