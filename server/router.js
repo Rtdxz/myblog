@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router();
 const ip = 'http://localhost:3000';
 const marked = require('marked');//将markdown语法转成html
+const jwt = require('jsonwebtoken')//设置token
 //使用multiparty接收文件
 var multiparty = require('multiparty');
 
@@ -22,7 +23,7 @@ var searchAllArticleSql = 'SELECT * FROM article';
 var searchArticleById = 'SELECT * FROM article WHERE id=?'
 var insertSql = 'INSERT INTO article(id,title,content,classify,describes) VALUES(?,?,?,?,?)';
 var numSql = 'SELECT count(*) FROM article';
-
+var searchUserSql = 'SELECT password FROM users WHERE username=?'
 
 
 
@@ -220,5 +221,53 @@ router.get('/article/getArticleById', function (req, res) {
 
 
 }); */
+
+router.post('/login', function (req, res) {
+  let username = req.body.username;
+  let password = req.body.password;
+  // console.log(username, password)
+  new Promise((resolve, reject) => {
+    connection.query(searchUserSql, username, function (err, result) {
+      if (err) { reject(err); }
+      else {
+        resolve(result);
+      }
+    })
+  }).then(result => {
+    console.log(result)
+    if (result.length == 0) {
+      console.log('yes')
+      res.send({
+        status: 1, // 0 表示处理成功。 1 表示处理失败
+        msg: '没有找到该用户', // 状态的描述
+        data: '11'
+      })
+      return false;
+    }
+    else {
+      let content = { username: req.body.username }; // 要生成token的主题信息
+      let secretOrPrivateKey = "jwt";// 这是加密的key（密钥）
+      //设置token
+      let token = jwt.sign(content, secretOrPrivateKey, {
+        expiresIn: 60 * 60 * 1  // 1小时过期
+      });
+      if (password != result[0].password) {
+        res.send({
+          status: 1,
+          msg: '密码错误',
+          data: '22'
+        })
+        return false;
+      }
+      res.send({
+        status: '0',
+        msg: '密码正确',
+        token: token
+      })
+      return true;
+    }
+
+  })
+})
 
 module.exports = router;

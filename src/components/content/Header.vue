@@ -25,6 +25,14 @@
           index="5"
           class="user-info"
           @click="moveToOtherPage('/admin')"
+          v-if="ifLogin"
+          >个人中心</el-menu-item
+        >
+        <el-menu-item
+          index="5"
+          class="login-info"
+          @click="moveToOtherPage('/login')"
+          v-else
           >登录</el-menu-item
         >
       </el-menu>
@@ -42,7 +50,11 @@ export default {
     return {
       activeIndex: "1",
       activeIndex2: "1",
+      ifLogin: false,
     };
+  },
+  created() {
+    this.ifLogin = window.localStorage.getItem("token") ? true : false;
   },
   mounted() {},
   methods: {
@@ -71,6 +83,12 @@ export default {
 }
 .user-info {
   position: absolute;
+  right: 0px;
+  top: 0;
+}
+.login-info {
+  position: absolute;
+  width: 68px;
   right: 0;
   top: 0;
 }
