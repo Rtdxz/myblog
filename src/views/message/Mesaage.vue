@@ -1,5 +1,14 @@
 <template>
-  <div></div>
+  <div>
+    <h1></h1>
+    <el-input
+      type="textarea"
+      :rows="2"
+      placeholder="随便写点什么吧"
+      v-model="textarea"
+    >
+    </el-input>
+  </div>
 </template>
 
 <script>

@@ -51,6 +51,7 @@ export default {
         describe: "",
         classify: "",
         tag: "",
+        date: "",
       },
       rules: {
         title: [
@@ -135,9 +136,11 @@ export default {
       });
     },
 
+    //提交
     submit() {
-      console.log(this.article);
       let _this = this;
+      _this.article.date = new Date().toJSON().slice(0, 10); //设置发布时间
+      console.log(_this.article.date);
       request({
         method: "post",
         url: "/api/article/add",

@@ -14,14 +14,15 @@ var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '123456',
-  database: 'blog'
+  database: 'blog',
+
 });
 connection.connect();
 
 //SQL语句
 var searchAllArticleSql = 'SELECT * FROM article';
 var searchArticleById = 'SELECT * FROM article WHERE id=?'
-var insertSql = 'INSERT INTO article(id,title,content,classify,describes) VALUES(?,?,?,?,?)';
+var insertSql = 'INSERT INTO article(id,title,content,classify,describes,date) VALUES(?,?,?,?,?,?)';
 var numSql = 'SELECT count(*) FROM article';
 var searchUserSql = 'SELECT password FROM users WHERE username=?'
 
@@ -37,9 +38,12 @@ router.get('/article/all', (req, res) => {
     if (err) {
       console.log('[SELECT ERROR]:', err.message);
     }
-    console.log(result);  //数据库查询结果返回到result中
+    //数据库查询结果返回到result中
 
-
+    result.forEach((ele, index) => {
+      //ele.date = ele.date.toLocaleString();//将所有时间装化为标准时间
+      ele.date = ele.date.toLocaleString().slice(0, 10);//标准时间的年月日，没有具体时间
+    })
 
     // 通过 req.query 获取客户端通过查询字符串，发送到服务器的数据
     const query = req.query;
@@ -60,7 +64,7 @@ router.post('/article/add', (req, res) => {
   let mdcontent = req.body.content;
   let htmlcontent = marked(mdcontent);//将markdown转化为html
 
-  console.log(filename)
+
   let filepath = './public/md/' + filename + '.md';
 
   fs.writeFile(filepath, mdcontent, function (err) {
@@ -95,7 +99,7 @@ router.post('/article/add', (req, res) => {
 
   }).then((id) => {
 
-    let insertSqlParams = [id, req.body['title'], filepath, req.body['classify'], req.body['describe']]//传入insert的值
+    let insertSqlParams = [id, req.body['title'], filepath, req.body['classify'], req.body['describe'], req.body['date']]//传入insert的值
     connection.query(insertSql, insertSqlParams, function (err, result) {
       if (err) {
         console.log('[INSERT ERROR] - ', err.message);
@@ -249,7 +253,7 @@ router.post('/login', function (req, res) {
       let secretOrPrivateKey = "jwt";// 这是加密的key（密钥）
       //设置token
       let token = jwt.sign(content, secretOrPrivateKey, {
-        expiresIn: 60 * 60 * 1  // 1小时过期
+        expiresIn: 60   // 1小时过期
       });
       if (password != result[0].password) {
         res.send({

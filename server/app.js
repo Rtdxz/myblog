@@ -14,9 +14,7 @@ app.use(express.static('public'));
 const port = 3000
 
 //验证token
-app.use(
 
-);
 // 一定要在路由之前，配置 cors 这个中间件，从而解决接口跨域的问题。
 const cors = require('cors');
 app.use(cors());

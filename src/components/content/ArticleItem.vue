@@ -1,13 +1,21 @@
 <template>
   <div>
     <el-container class="article">
-      <router-link :to="'/article/' + article.id"
-        ><el-header class="article-header">{{
+      <el-header class="article-header"
+        ><router-link :to="'/article/' + article.id">{{
           article.title
-        }}</el-header></router-link
+        }}</router-link></el-header
       >
-      <el-main v-html="article.describes"></el-main>
-      <el-footer>Footer</el-footer>
+      <div class="time-div">
+        <i class="el-icon-date"></i> {{ article.date
+        }}<!-- 时间 -->
+      </div>
+      <el-main><p v-text="article.describes"></p> </el-main>
+      <el-footer>
+        <router-link :to="'/article/' + article.id"
+          ><el-button size="small">阅读更多=></el-button>
+        </router-link></el-footer
+      >
     </el-container>
   </div>
 </template>
@@ -27,16 +35,55 @@ export default {
       type: Object,
     },
   },
-
+  computed: {},
   beforeMount() {},
   methods: {},
 };
 </script>
 
 <style lang="scss" scoped>
+a {
+  text-decoration: none;
+  color: black;
+}
 .article {
   margin-bottom: 20px;
-  height: 300px;
-  background-color: rgba(180, 180, 180, 0.5);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  // background-color: rgba(180, 180, 180, 0.5);
+  padding: 10px;
+  padding-top: 20px;
+}
+.el-footer,
+.el-header,
+.el-main {
+  box-sizing: border-box;
+}
+.el-footer {
+  height: 40px !important;
+  line-height: 40px;
+  text-align: right;
+}
+.el-main {
+  padding-top: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 1px;
+  font-size: 15px;
+}
+.el-header {
+  height: 40px !important;
+  word-wrap: break-word;
+  text-align: left;
+  line-height: 40px;
+  font-weight: 1000;
+  font-size: 25px;
+  color: #555;
+}
+
+.time-div {
+  margin-top: 7px;
+  padding-left: 20px;
+  color: #6e7173;
+  font-size: 14px;
 }
 </style>

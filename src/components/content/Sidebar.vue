@@ -1,25 +1,41 @@
 <template>
   <div>
-    <div class="side-bar hidden-sm-and-down"></div>
+    <div class="side-bar hidden-sm-and-down">
+      <personal-card></personal-card>
+    </div>
   </div>
 </template>
 
 <script>
+import PersonalCard from "./PersonalCard";
+import { request } from "@/network/request";
 export default {
   name: "Sidebar",
-  components: {},
+  components: {
+    PersonalCard,
+  },
   directives: {},
   data() {
     return {};
   },
   mounted() {},
-  methods: {},
+  methods: {
+    getUserInfo() {
+      request({
+        url: "/api/article/count",
+        methods: "get",
+      }).then((res) => {
+        console.log(res);
+      });
+    },
+  },
 };
 </script>
 
 <style scoped>
 .side-bar {
-  background-color: orange;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  /* background-color: orange; */
   height: 600px;
 }
 </style>

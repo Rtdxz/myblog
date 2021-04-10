@@ -4,7 +4,7 @@
     <div class="container">
       <h1>首页</h1>
       <div>
-        <el-row :gutter="20">
+        <el-row :gutter="30">
           <el-col :sm="24" :md="16"><article-list></article-list></el-col>
           <el-col :sm="24" :md="8"><side-bar></side-bar></el-col>
         </el-row>

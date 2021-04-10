@@ -21,13 +21,19 @@
         </el-submenu>
         <el-menu-item index="3">留言板</el-menu-item>
         <el-menu-item index="4">关于</el-menu-item>
-        <el-menu-item
+        <!-- <el-menu-item
           index="5"
           class="user-info"
           @click="moveToOtherPage('/admin')"
-          v-if="ifLogin"
           >个人中心</el-menu-item
-        >
+        > -->
+        <el-submenu class="user-info" index="5" v-if="ifLogin">
+          <template slot="title">个人中心</template>
+          <el-menu-item index="5-1" @click="moveToOtherPage('/admin')"
+            >后台管理</el-menu-item
+          >
+          <el-menu-item index="5-2" @click="loginOut">退出登录</el-menu-item>
+        </el-submenu>
         <el-menu-item
           index="5"
           class="login-info"
@@ -64,6 +70,10 @@ export default {
     handleSelect(key, keyPath) {
       console.log(key, keyPath);
     },
+    loginOut() {
+      localStorage.removeItem("token");
+      location.reload();
+    },
   },
 };
 </script>
@@ -80,7 +90,9 @@ export default {
   margin-top: 60px;
   height: 400px;
   background-color: lightblue;
+  overflow: hidden;
 }
+
 .user-info {
   position: absolute;
   right: 0px;
@@ -91,5 +103,8 @@ export default {
   width: 68px;
   right: 0;
   top: 0;
+}
+.el-menu {
+  border-bottom: none; /* 去除默认下边框 */
 }
 </style>
