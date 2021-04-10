@@ -7,6 +7,9 @@ Vue.use(VueRouter);
 
 
 import Home from '@/views/home/Home'
+import Message from '@/views/message/Message'
+import About from '@/views/about/About'
+import Archive from '@/views/archive/Archive'
 
 import Markdown from '@/admin/markdowneditor/MarkdownEditor'
 import AdminIndex from '@/admin/adminindex/AdminIndex'
@@ -17,6 +20,7 @@ import ArticleDetail from '@/views/article/ArticleDetail'
 import Login from '@/views/login/Login'
 
 import ErrorPage from '@/views/404'
+
 const routes = [
   {
     path: '*',
@@ -31,9 +35,18 @@ const routes = [
     component: Home
   },
   {
-    path: '/markdown',
-    component: Markdown,
+    path: '/message',
+    component: Message,
   },
+  {
+    path: '/archive',
+    component: Archive
+  },
+  {
+    path: '/about',
+    component: About
+  },
+
   {
     path: '/admin',
     component: AdminIndex,

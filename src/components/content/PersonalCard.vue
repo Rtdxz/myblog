@@ -2,7 +2,7 @@
   <div class="box">
     <div class="top">
       <div class="profile-picture">
-        <img src="~@/assets/img/profile-picture2.jpeg" alt="图片显示错误" />
+        <img src="~@/assets/img/profile-picture2.jpg" alt="图片显示错误" />
       </div>
       <div class="name">Crt</div>
       <div class="info">
@@ -29,11 +29,11 @@ export default {
   props: {
     visitorVolume: {
       type: Number,
-      default: 0,
+      default: 999,
     },
     articleCount: {
       type: Number,
-      default: 0,
+      default: 999,
     },
   },
   data() {
@@ -56,7 +56,7 @@ export default {
 }
 .profile-picture {
   max-width: 170px;
-
+  // border: 1px solid rgba(0, 0, 0, 0.1);
   width: 70%px;
   height: 70%px;
   border-radius: 50%;

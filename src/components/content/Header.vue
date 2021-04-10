@@ -2,15 +2,15 @@
   <div class="header">
     <div class="header-nav">
       <el-menu
-        :default-active="activeIndex2"
         class="el-menu-demo"
         mode="horizontal"
         @select="handleSelect"
         background-color="#545c64"
         text-color="#fff"
         active-text-color="#ffd04b"
+        :default-active="$route.path"
       >
-        <el-menu-item index="1" @click="moveToOtherPage('/home')"
+        <el-menu-item index="/home" @click="moveToOtherPage('/home')"
           >首页</el-menu-item
         >
         <el-submenu index="2">
@@ -19,8 +19,15 @@
           <el-menu-item index="2-2">选项2</el-menu-item>
           <el-menu-item index="2-3">选项3</el-menu-item>
         </el-submenu>
-        <el-menu-item index="3">留言板</el-menu-item>
-        <el-menu-item index="4">关于</el-menu-item>
+        <el-menu-item index="/archive" @click="moveToOtherPage('/archive')"
+          >归档</el-menu-item
+        >
+        <el-menu-item index="/message" @click="moveToOtherPage('/message')"
+          >留言板</el-menu-item
+        >
+        <el-menu-item index="/about" @click="moveToOtherPage('/about')"
+          >关于</el-menu-item
+        >
         <!-- <el-menu-item
           index="5"
           class="user-info"

@@ -179,7 +179,7 @@ router.get('/article/getArticleById', function (req, res) {
     //数据库查询结果返回到result中
 
     let article = result[0];//由于只有一条结果，所以第0位即要查询的article
-
+    article.date = article.date.toLocaleString().slice(0, 10);//标准时间的年月日，没有具体时间
     fs.readFile(article.content, function (err, data) {
       if (err) {
         console.log(err);

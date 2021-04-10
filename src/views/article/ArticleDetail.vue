@@ -1,18 +1,26 @@
 <template>
   <div>
+    <el-backtop :bottom="60"></el-backtop>
     <Header></Header>
+
     <div class="container">
       <div class="article-header">
         <h1>{{ article.title }}</h1>
+        <div class="info">
+          <span>{{ article.date }}</span>
+        </div>
       </div>
       <div class="padding">
         <div
           class="v-html markdown-body"
           v-html="article.content"
           v-highlight
+          ref="markdown"
         ></div>
       </div>
     </div>
+    <article-nav :titleArray="titleArray"></article-nav>
+    <a href="#CSS">111</a>
     <Footer></Footer>
   </div>
 </template>
@@ -22,6 +30,8 @@ import { request } from "@/network/request";
 import Header from "@/components/content/Header";
 import Footer from "@/components/content/Footer";
 
+import ArticleNav from "@/components/content/ArticleNav";
+
 import "@/assets/js/hljs"; //代码高亮
 
 export default {
@@ -29,6 +39,7 @@ export default {
   components: {
     Header,
     Footer,
+    ArticleNav,
   },
   directives: {},
   data() {
@@ -36,6 +47,7 @@ export default {
       article: Object,
       content: "",
       title: "",
+      titleArray: [],
     };
   },
   created() {
@@ -49,12 +61,41 @@ export default {
       },
     }).then((res) => {
       let article = res.data.data;
-      console.log(article);
+      //console.log(article);
       this.article = article;
     });
   },
-  mounted() {},
-  methods: {},
+  mounted() {
+    this.getArticleArray();
+  },
+  methods: {
+    //生成标题数组
+    getArticleArray() {
+      setTimeout(() => {
+        this.$refs.markdown.getElementsByTagName("h1").forEach((ele, index) => {
+          ele.h2childArray = [];
+          ele.setAttribute("id", ele.innerText);
+          let child = ele.nextElementSibling;
+          while (child) {
+            if (child.tagName == "H1") {
+              break;
+            }
+            if (child.tagName == "H2") {
+              child.setAttribute("id", child.innerText);
+              ele.h2childArray.push({ label: child.innerText });
+            }
+            child = child.nextElementSibling;
+          }
+          // console.log(ele.innerText, ele.h2childArray, index);
+          this.titleArray.push({
+            label: ele.innerText, //设置成label和children为了和element一样
+            children: ele.h2childArray,
+          });
+          console.log(this.$refs.markdown.getElementsByTagName("h1"));
+        });
+      }, 100);
+    },
+  },
 };
 </script>
 
@@ -65,7 +106,7 @@ export default {
 }
 .article-header {
   height: 60px;
-  font-size: 30px;
+  font-size: 20px;
   text-align: center;
   margin-bottom: 50px;
 }

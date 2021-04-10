@@ -86,6 +86,7 @@ export default {
           alert(res.data.msg);
           window.localStorage.setItem("token", token);
           this.$router.push("/home");
+          location.reload();
         }
       });
     },
