@@ -10,8 +10,8 @@
       </el-form-item>
       <el-form-item label="分类" prop="classify">
         <el-select v-model="article.classify" placeholder="编程">
-          <el-option label="编程" value="code"></el-option>
-          <el-option label="日常" value="daily"></el-option>
+          <el-option label="编程" value="编程"></el-option>
+          <el-option label="日常" value="日常"></el-option>
         </el-select>
       </el-form-item>
       <!-- <mavon-editor v-model="content" /> -->

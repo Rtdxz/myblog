@@ -15,9 +15,13 @@
         >
         <el-submenu index="2">
           <template slot="title">分类</template>
-          <el-menu-item index="2-1">选项1</el-menu-item>
-          <el-menu-item index="2-2">选项2</el-menu-item>
-          <el-menu-item index="2-3">选项3</el-menu-item>
+          <el-menu-item
+            @click="moveToOtherPage('/categories/' + category.classify)"
+            index=""
+            v-for="category in categoryList"
+            :key="category.classify"
+            >{{ category.classify }}</el-menu-item
+          >
         </el-submenu>
         <el-menu-item index="/archive" @click="moveToOtherPage('/archive')"
           >归档</el-menu-item
@@ -50,11 +54,11 @@
         >
       </el-menu>
     </div>
-    <div class="header-img"></div>
   </div>
 </template>
 
 <script>
+import { request } from "@/network/request";
 export default {
   name: "Header",
   components: {},
@@ -64,10 +68,12 @@ export default {
       activeIndex: "1",
       activeIndex2: "1",
       ifLogin: false,
+      categoryList: [],
     };
   },
   created() {
     this.ifLogin = window.localStorage.getItem("token") ? true : false;
+    this.getCategoryList();
   },
   mounted() {},
   methods: {
@@ -81,23 +87,28 @@ export default {
       localStorage.removeItem("token");
       location.reload();
     },
+    getCategoryList() {
+      request({
+        url: "/api/article/getCategoryList",
+        methods: "get",
+      }).then((res) => {
+        this.categoryList = res.data.data;
+      });
+    },
   },
 };
 </script>
 
 <style scoped>
+.header {
+  margin-bottom: 60px;
+}
 .header-nav {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
-}
-.header-img {
-  margin-top: 60px;
-  height: 400px;
-  background-color: lightblue;
-  overflow: hidden;
 }
 
 .user-info {

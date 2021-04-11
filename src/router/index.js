@@ -10,6 +10,7 @@ import Home from '@/views/home/Home'
 import Message from '@/views/message/Message'
 import About from '@/views/about/About'
 import Archive from '@/views/archive/Archive'
+import Category from '@/views/category/Category'
 
 import Markdown from '@/admin/markdowneditor/MarkdownEditor'
 import AdminIndex from '@/admin/adminindex/AdminIndex'
@@ -64,6 +65,10 @@ const routes = [
   {
     path: '/article/:articleId',
     component: ArticleDetail
+  },
+  {
+    path: '/categories/:category',
+    component: Category
   },
   {
     path: '/login',

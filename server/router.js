@@ -9,6 +9,10 @@ var multiparty = require('multiparty');
 var fs = require('fs');//用于接收文件，读写文件
 
 var mysql = require('mysql');//mysql
+
+
+
+
 //连接mysql
 var connection = mysql.createConnection({
   host: 'localhost',
@@ -20,26 +24,33 @@ var connection = mysql.createConnection({
 connection.connect();
 
 //SQL语句
-var searchAllArticleSql = 'SELECT * FROM article';
+//查找所有文章
+var searchAllArticlesSql = 'SELECT * FROM article';
+//根据id查找文章
 var searchArticleById = 'SELECT * FROM article WHERE id=?'
+//插入文章
 var insertSql = 'INSERT INTO article(id,title,content,classify,describes,date) VALUES(?,?,?,?,?,?)';
+//获取文章数量
 var numSql = 'SELECT count(*) FROM article';
+//查看用户密码
 var searchUserSql = 'SELECT password FROM users WHERE username=?'
-
-
+//获取所有分类类型数组
+var categoryListSql = 'SELECT classify FROM article GROUP BY classify'
+//根据分类类型获取文章列表
+var searchArticlesByClassifySql = 'SELECT * FROM article WHERE classify=?'
 
 // 搜索所有文章
 router.get('/article/all', (req, res) => {
-
-
-
-
-  connection.query(searchAllArticleSql, function (err, result) {
-    if (err) {
-      console.log('[SELECT ERROR]:', err.message);
-    }
-    //数据库查询结果返回到result中
-
+  new Promise((resolve, reject) => {
+    connection.query(searchAllArticlesSql, function (err, result) {
+      if (err) {
+        console.log('[SELECT ERROR]:', err.message);
+        reject(err)
+      }
+      //数据库查询结果返回到result中
+      resolve(result)
+    })
+  }).then((result) => {
     result.forEach((ele, index) => {
       //ele.date = ele.date.toLocaleString();//将所有时间装化为标准时间
       ele.date = ele.date.toLocaleString().slice(0, 10);//标准时间的年月日，没有具体时间
@@ -53,11 +64,53 @@ router.get('/article/all', (req, res) => {
       status: 0, // 0 表示处理成功。 1 表示处理失败
       msg: 'GET 请求成功！', // 状态的描述
       data: result, // 需要响应给客户端的数据
+
     });
-  });
+  }).catch(err => {
+    res.status(500).send({
+      status: 1, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求失败！', // 状态的描述
+      data: err, // 需要响应给客户端的数据
+
+    });
+  })
+
 });
 
-// 定义 post 接口,用于添加文章
+//根据分类类型获取文章列表接口
+router.get('/article/getArticleByCategory', (req, res) => {
+  let category = req.query.category;
+  console.log(category);
+  new Promise((resolve, reject) => {
+    connection.query(searchArticlesByClassifySql, category, function (err, result) {
+      if (err) {
+        console.log('[SELECT ERROR]:', err.message);
+        reject(err)
+      }
+      resolve(result);
+    })
+  }).then(result => {
+    result.forEach((ele, index) => {
+      //ele.date = ele.date.toLocaleString();//将所有时间装化为标准时间
+      ele.date = ele.date.toLocaleString().slice(0, 10);//标准时间的年月日，没有具体时间
+    })
+    res.status(200).send({
+      status: 0, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求成功！', // 状态的描述
+      data: result, // 需要响应给客户端的数据
+    })
+  }).catch(err => {
+    res.status(500).send({
+      status: 1, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求失败！', // 状态的描述
+      data: err, // 需要响应给客户端的数据
+    })
+
+  })
+})
+
+
+// 用于添加文章
 router.post('/article/add', (req, res) => {
 
   let filename = req.body.title;
@@ -167,22 +220,28 @@ router.post('/article/add/images', function (req, res) {
 // connection.end();
 
 
-
+//查找指定id文章接口
 router.get('/article/getArticleById', function (req, res) {
   const query = req.query;
   let id = query.id;
   console.log(query.id)
-  connection.query(searchArticleById, [query.id], function (err, result) {
-    if (err) {
-      console.log('[SELECT ERROR]:', err.message);
-    }
-    //数据库查询结果返回到result中
+  new Promise((resolve, reject) => {
+    connection.query(searchArticleById, [query.id], function (err, result) {
+      if (err) {
+        console.log('[SELECT ERROR]:', err.message);
+        reject('[SELECT ERROR]:', err.message);
+      }
+      resolve(result)
 
+    })
+    //数据库查询结果返回到result中
+  }).then((result) => {
     let article = result[0];//由于只有一条结果，所以第0位即要查询的article
     article.date = article.date.toLocaleString().slice(0, 10);//标准时间的年月日，没有具体时间
     fs.readFile(article.content, function (err, data) {
       if (err) {
         console.log(err);
+        reject(err);
       } else {
         console.log(data.toString());
         console.log(data.length + ' bytes');
@@ -197,12 +256,65 @@ router.get('/article/getArticleById', function (req, res) {
       }
     });
 
-    // 通过 req.query 获取客户端通过查询字符串，发送到服务器的数据
-
-    // 调用 res.send() 方法，向客户端响应处理的结果
-
+  }).catch(err => {
+    res.status(500).send({
+      status: 0, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求成功！', // 状态的描述
+      data: err, // 需要响应给客户端的数据
+    });
   });
+
+  // 通过 req.query 获取客户端通过查询字符串，发送到服务器的数据
+
+  // 调用 res.send() 方法，向客户端响应处理的结果
+
+
 })
+
+
+router.get('/article/getCategoryList', (req, res) => {
+  new Promise((resolve, reject) => {
+    connection.query(categoryListSql, function (err, result) {
+      if (err) {
+        console.log('[SELECT ERROR]:', err.message);
+        reject('[SELECT ERROR]:', err.message);
+      }
+      resolve(result);
+    })
+  }).then((result) => {
+    /* result.forEach((ele, index) => {
+      //ele.date = ele.date.toLocaleString();//将所有时间装化为标准时间
+      ele.date = ele.date.toLocaleString().slice(0, 10);//标准时间的年月日，没有具体时间
+    }) */
+    // 通过 req.query 获取客户端通过查询字符串，发送到服务器的数据
+    const query = req.query;
+    console.log(query);
+    // 调用 res.send() 方法，向客户端响应处理的结果
+    res.send({
+      status: 0, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求成功！', // 状态的描述
+      data: result, // 需要响应给客户端的数据
+    });
+  }).catch(err => {
+    console.log(err)
+    res.status(500).send({
+      status: 1, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求失败！', // 状态的描述
+      data: err, // 需要响应给客户端的数据
+
+    });
+  })
+  //数据库查询结果返回到result中
+});
+
+
+
+
+
+
+
+
+
 
 
 
@@ -226,6 +338,8 @@ router.get('/article/getArticleById', function (req, res) {
 
 }); */
 
+
+//登录接口
 router.post('/login', function (req, res) {
   let username = req.body.username;
   let password = req.body.password;

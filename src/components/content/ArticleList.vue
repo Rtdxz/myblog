@@ -13,37 +13,30 @@ import "@/assets/js/mock.js";
 
 import ArticleItem from "./ArticleItem";
 
-import { request } from "@/network/request";
-
 export default {
   name: "articleList",
   components: {
     ArticleItem,
   },
   directives: {},
+  props: {
+    articles: {
+      type: Array,
+      default: function () {
+        return [
+          { title: 1, content: 1 },
+          { title: 2, content: 1 },
+          { title: 3, content: 1 },
+          { title: 4, content: 1 },
+        ];
+      },
+    },
+  },
   data() {
-    return {
-      articles: [
-        { title: 1, content: 1 },
-        { title: 2, content: 1 },
-        { title: 3, content: 1 },
-        { title: 4, content: 1 },
-      ],
-    };
+    return {};
   },
   created() {
-    request({
-      method: "get",
-      url: "/api/article/all",
-      /* params: {
-        firstName: "Fred",
-        sss: "sss",
-      }, */
-    }).then((res) => {
-      console.log(res.data.data);
-
-      this.articles = res.data.data;
-    });
+    console.log(this.articles);
 
     /* this.$axios
       .get("/api/test")

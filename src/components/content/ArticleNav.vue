@@ -13,7 +13,6 @@
       :props="defaultProps"
       accordion
       @node-click="(data) => goAnchorPoint(data.label)"
-      v-clickoutside="clickoutside"
     >
     </el-tree>
   </div>
@@ -31,7 +30,7 @@ export default {
       default: [],
     },
   },
-  directives: { Clickoutside },
+  /*  directives: { Clickoutside }, */
   data() {
     return {
       defaultProps: {
@@ -43,19 +42,21 @@ export default {
 
   mounted() {},
   methods: {
-    clickoutside() {
+    /* clickoutside() {
       document.getElementsByClassName(
         "el-tree-node__children"
       )[0].style.display = "none";
       document.getElementsByClassName("el-tree-node__content")[0].click();
-    },
+    }, */
     goAnchorPoint(elemId) {
       let anchorH = document.getElementById(elemId).offsetTop - 70;
 
       if (document.documentElement.scrollTop) {
         document.documentElement.scrollTop = anchorH;
+        //this.anmita("document", anchorH);
       } else if (document.body.scrollTop) {
         document.body.scrollTop = anchorH;
+        //this.anmita("body", anchorH);
       } else {
         //二者均为0状态，有一者恒为0，另一者可能因为回到顶部等操作被置为0，便会出现这种状况
         document.documentElement.scrollTop = anchorH;
@@ -63,6 +64,27 @@ export default {
       }
 
       //window.scrollTo(0,anchorH)  //若以上scrollTop方式不生效，可使用此scrollTo方式，但注意scrollTo在安卓手机上存在兼容性问题
+    },
+    anmita(classify, anchorH) {
+      if (classify == "body") {
+        let y = Math.floor(document.body.scrollTop - anchorH);
+        let timer = setInterval(function () {
+          document.body.scrollTop += y;
+          if (y <= 1) {
+            document.body.scrollTop = anchorH;
+            clearInterval(timer);
+          }
+        }, 100);
+      } else if (classify == "document") {
+        let y = Math.floor(document.documentElement.scrollTop - anchorH);
+        let timer = setInterval(function () {
+          document.documentElement.scrollTop += y;
+          if (y <= 1) {
+            document.documentElement.scrollTop = anchorH;
+            clearInterval(timer);
+          }
+        }, 0);
+      }
     },
   },
 };
