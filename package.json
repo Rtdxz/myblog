@@ -22,6 +22,7 @@
     "mavon-editor": "^2.9.1",
     "multiparty": "^4.2.2",
     "mysql": "^2.18.1",
+    "node-uuid": "^1.4.8",
     "path": "^0.12.7",
     "vue": "^2.6.11",
     "vue-axios": "^3.2.4",

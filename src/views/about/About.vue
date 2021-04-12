@@ -8,7 +8,12 @@
       </div>
 
       <div class="info">
-        <p>目前瞎折腾中<br />不知道会发生什么</p>
+        <p>
+          ●广工大三计算机学生一枚<br />
+          目前瞎折腾中<br />
+          不知道会发生什么<br />
+          目前很多功能尚未完善<br />
+        </p>
       </div>
     </div>
     <Footer></Footer>
@@ -37,11 +42,8 @@ export default {
 
 <style  scoped>
 .title {
-  text-align: center;
-  padding: 20px;
 }
 .info {
-  margin: 0 auto;
   padding: 10px;
   width: 600px;
   height: 400px;

@@ -1,26 +1,27 @@
 <template>
   <div>
-    <el-backtop :bottom="60"></el-backtop>
     <Header></Header>
 
     <div class="container">
-      <div class="article-header">
-        <h1>{{ article.title }}</h1>
-        <div class="info">
-          <span>{{ article.date }}</span>
+      <div class="box">
+        <div class="article-header">
+          <h1>{{ article.title }}</h1>
+          <div class="info">
+            <span>{{ article.date }}</span>
+          </div>
         </div>
-      </div>
-      <div class="padding">
-        <div
-          class="v-html markdown-body"
-          v-html="article.content"
-          v-highlight
-          ref="markdown"
-        ></div>
+        <div class="padding">
+          <div
+            class="v-html markdown-body"
+            v-html="article.content"
+            v-highlight
+            ref="markdown"
+          ></div>
+        </div>
       </div>
     </div>
     <article-nav :titleArray="titleArray"></article-nav>
-    <a href="#CSS">111</a>
+
     <Footer></Footer>
   </div>
 </template>
@@ -103,6 +104,12 @@ export default {
 .container {
   width: 75%;
   margin: 100px auto;
+}
+.box {
+  padding: 10px;
+  padding-top: 20px;
+  min-height: 500px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
 }
 .article-header {
   height: 60px;

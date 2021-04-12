@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <el-backtop :bottom="60"></el-backtop>
     <router-view></router-view>
   </div>
 </template>
@@ -19,12 +20,13 @@ export default {
 }
 .container {
   max-width: 80%;
-  margin: 0 auto;
+  margin: 120px auto;
+  min-height: 800px;
 }
 @media screen and (max-width: 800px) {
   .container {
     max-width: 95% !important;
-    margin: 0 auto;
+    margin: 100px auto;
   }
 }
 </style>

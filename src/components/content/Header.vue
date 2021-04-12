@@ -17,7 +17,7 @@
           <template slot="title">分类</template>
           <el-menu-item
             @click="moveToOtherPage('/categories/' + category.classify)"
-            index=""
+            index="'/categories/' + category.classify"
             v-for="category in categoryList"
             :key="category.classify"
             >{{ category.classify }}</el-menu-item

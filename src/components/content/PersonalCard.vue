@@ -17,6 +17,7 @@
     </div>
     <div class="bottom">
       <div>最近文章</div>
+      <div></div>
     </div>
   </div>
 </template>
