@@ -56,6 +56,6 @@ export default {
 
 <style scoped>
 .article-list {
-  min-height: 600px;
+  /* min-height: 600px; */
 }
 </style>

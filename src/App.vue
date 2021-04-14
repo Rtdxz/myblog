@@ -18,6 +18,12 @@ export default {
 * {
   transition: ease-out 0.1s;
 }
+.nomore {
+  width: 100%;
+  text-align: center;
+  height: 30px;
+  line-height: 30px;
+}
 .container {
   max-width: 80%;
   margin: 120px auto;

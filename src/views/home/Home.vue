@@ -16,7 +16,7 @@
             <el-button v-if="page * 10 < page_count" @click="loadMore"
               >点击加载更多</el-button
             >
-            <el-button v-else>没有更多了</el-button>
+            <div class="nomore" v-else>没有更多了...</div>
           </el-col>
           <el-col :sm="24" :md="8"><side-bar></side-bar></el-col>
         </el-row>
@@ -66,7 +66,7 @@ export default {
       },
     }).then((res) => {
       this.articles = res.data.data;
-      console.log(res);
+      console.log(res.data);
     });
 
     request({
@@ -126,7 +126,7 @@ export default {
   animation-direction: alternate;
   position: relative;
 
-  max-height: 600px;
+  max-height: 400px;
   width: 100%;
   /* background-color: lightblue; */
   overflow: hidden;

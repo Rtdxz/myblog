@@ -9,6 +9,9 @@
       <div class="time-div">
         <i class="el-icon-date"></i> {{ article.date
         }}<!-- 时间 -->
+        <span class="tag" v-for="tag in article.tags" :key="tag">{{
+          tag
+        }}</span>
       </div>
       <el-main><p v-text="article.describes"></p> </el-main>
       <el-footer>
@@ -85,5 +88,20 @@ a {
   padding-left: 20px;
   color: #6e7173;
   font-size: 14px;
+}
+.tag {
+  text-align: center;
+  display: inline-block;
+  width: auto;
+  padding: 0 10px 0;
+  margin: 0 10px 10px;
+  height: 30px;
+  line-height: 30px;
+  background: transparent;
+  border: 1px solid #f3f3f3;
+  font-size: 12px;
+  color: #797979;
+  border-radius: 2px;
+  margin-right: 5px;
 }
 </style>

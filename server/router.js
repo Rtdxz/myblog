@@ -11,6 +11,7 @@ var fs = require('fs');//用于接收文件，读写文件
 var mysql = require('mysql');//mysql
 
 var uuid = require('node-uuid');//生成唯一id
+const { listLanguages } = require('highlight.js');
 
 
 //连接mysql
@@ -24,18 +25,22 @@ var connection = mysql.createConnection({
 connection.connect();
 
 //SQL语句
-//查找所有文章
-var searchAllArticlesSql = 'SELECT * FROM article ORDER BY date DESC';
+//时间顺序查找所有文章
+var searchAllArticlesSql = 'SELECT * FROM article ORDER BY date DESC'
+//id顺序查找所有文章
+var searchAllArticlesSqlById = 'SELECT * FROM article ORDER BY id'
 //根据id查找文章
 var searchArticleById = 'SELECT * FROM article WHERE id=?'
 //插入文章
-var insertArticleSql = 'INSERT INTO article(id,title,content,classify,describes,date) VALUES(?,?,?,?,?,?)';
+var insertArticleSql = 'INSERT INTO article(id,title,content,classify,describes,date) VALUES(?,?,?,?,?,?)'
+//删除文章
+var deleteArticleSql = 'DELETE FROM article WHERE id=?'
 //获取文章数量
-var numSql = 'SELECT count(*) FROM article';
+var numSql = 'SELECT count(*) FROM article'
 //查看用户密码
 var searchUserSql = 'SELECT password FROM users WHERE username=?'
 //获取所有分类类型数组
-var categoryListSql = 'SELECT classify FROM article  GROUP BY classify'
+var categoryListSql = 'SELECT count(*) as sum,classify FROM article  GROUP BY classify'
 //根据分类类型获取文章列表
 var searchArticlesByClassifySql = 'SELECT * FROM article  WHERE classify=? ORDER BY date DESC LIMIT ?, ?'
 //查询分类中文章数量
@@ -48,6 +53,19 @@ var searchArticlesByDate = 'SELECT date FROM article GROUP BY date)'
 var searchMessage = 'SELECT * FROM discussion ORDER BY date DESC'
 //添加评论
 var insertMessageSql = 'INSERT INTO discussion(id,name,message,date) VALUES(?,?,?,?)'
+//添加标签
+var insertTagSql = 'INSERT INTO tag(tagname) VALUES(?)'
+//查找所有标签
+var searchAllTagsSql = 'SELECT tagname FROM tag '
+//插入文章关联标签表
+var insertTagRelateSql = 'INSERT INTO tagrelate(articleid,tagname) VALUES(?,?)'
+//根据ID查询问文章的标签
+var searchArticleTagsSql = 'SELECT tagname FROM tagrelate WHERE articleid=? '
+//根据标签查找分页文章
+var searchArticlesByTagSql = 'SELECT * FROM article WHERE id in(SELECT articleid from tagrelate WHERE tagname=?) ORDER BY date DESC LIMIT ?, ?'
+//查询标签对应数量文章
+var searchArticleNumByTagSql = 'SELECT count(*) FROM tagrelate  WHERE tagname=? GROUP BY tagname'
+
 
 //查询归档
 router.get('/article/getArticlesByTimeLine', (req, res) => {
@@ -95,6 +113,39 @@ router.get('/article/getArticlesByTimeLine', (req, res) => {
   })
 })
 
+//后台查询全部文章
+router.get('/article/getAllArticles', (req, res) => {
+  new Promise((resolve, reject) => {
+    connection.query(searchAllArticlesSql, function (err, result) {
+      if (err) {
+        console.log('[SELECT ERROR]:', err.message);
+        reject(err)
+      }
+      //数据库查询结果返回到result中
+      resolve(result)
+    })
+  }).then((result) => {
+
+    result.forEach((ele, index) => {
+      //ele.date = ele.date.toLocaleString();//将所有时间装化为标准时间
+      ele.date = ele.date.toLocaleString();//标准时间的年月日，没有具体时间
+    })
+    // 调用 res.send() 方法，向客户端响应处理的结果
+    res.send({
+      status: 0, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求成功！', // 状态的描述
+      data: result, // 需要响应给客户端的数据
+    });
+  }).catch(err => {
+    console.log(err)
+    res.status(500).send({
+      status: 1, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求失败！', // 状态的描述
+      data: err, // 需要响应给客户端的数据
+    });
+  })
+})
+
 //查询评论
 router.get('/discussion/allmessage', (req, res) => {
   new Promise((resolve, reject) => {
@@ -126,8 +177,6 @@ router.get('/discussion/allmessage', (req, res) => {
     });
   })
 })
-
-
 
 //添加评论
 router.post('/discussion/addMessage', (req, res) => {
@@ -177,6 +226,7 @@ router.get('/article/getArticleCountByCategory', (req, res) => {
     })
   }).then((result) => {
     // 调用 res.send() 方法，向客户端响应处理的结果
+
     console.log(result)
     res.send({
       status: 0, // 0 表示处理成功。 1 表示处理失败
@@ -237,11 +287,31 @@ router.get('/article/getArticlesByPage', (req, res) => {
       resolve(result)
     })
   }).then((result) => {
-    result.forEach((ele, index) => {
-      //ele.date = ele.date.toLocaleString();//将所有时间装化为标准时间
-      ele.date = ele.date.toLocaleString().slice(0, 9);//标准时间的年月日，没有具体时间
+    //解决方案，在then中需要继续多次异步后返回值，先用一个list存储每一个异步操作的Promise,再在后面promise.all中进行回调返回
+    let list = [];
+    return new Promise(resolve => {
+      result.forEach(ele => {
+        list.push(new Promise(resolve => {
+          connection.query(searchArticleTagsSql, ele.id, function (err, re) {
+            if (err) {
+              console.log('[SELECT ERROR]:', err.message);
+              reject(err)
+            }
+            ele.date = ele.date.toLocaleString().slice(0, 9);//标准时间的年月日，没有具体时间
+            ele.tags = [];//每个元素的tag数组，由于每次查找返回的是对象，要转化成需要获得的字符串再push
+            re.forEach(tag => {
+              ele.tags.push(tag.tagname)
+            });
+            resolve();
+          })
+        }))
+      })
+      Promise.all(list).then(() => {
+        //all用于解决多个异步操作完成时进行回调
+        resolve(result)//这里的resolve时外层调用，一旦resolve就会将结果传给下层的then
+      })
     })
-    // 调用 res.send() 方法，向客户端响应处理的结果
+  }).then(result => {
     console.log(result)
     res.send({
       status: 0, // 0 表示处理成功。 1 表示处理失败
@@ -301,13 +371,6 @@ router.get('/article/all', (req, res) => {
 
 //根据分类类型获取文章列表接口
 router.get('/article/getArticleByCategory', (req, res) => {
-
-
-
-
-
-
-
   let category = req.query.category;
   console.log(category);
   new Promise((resolve, reject) => {
@@ -323,15 +386,38 @@ router.get('/article/getArticleByCategory', (req, res) => {
       resolve(result);
     })
   }).then(result => {
-    result.forEach((ele, index) => {
-      //ele.date = ele.date.toLocaleString();//将所有时间装化为标准时间
-      ele.date = ele.date.toLocaleString().slice(0, 9);//标准时间的年月日，没有具体时间
+
+    let list = [];
+    return new Promise(resolve => {
+      result.forEach(ele => {
+        list.push(new Promise(resolve => {
+          connection.query(searchArticleTagsSql, ele.id, function (err, re) {
+            if (err) {
+              console.log('[SELECT ERROR]:', err.message);
+              reject(err)
+            }
+            ele.date = ele.date.toLocaleString().slice(0, 9);//标准时间的年月日，没有具体时间
+            ele.tags = [];//每个元素的tag数组，由于每次查找返回的是对象，要转化成需要获得的字符串再push
+            re.forEach(tag => {
+              ele.tags.push(tag.tagname)
+            });
+            resolve();
+          })
+        }))
+      })
+      Promise.all(list).then(() => {
+        //all用于解决多个异步操作完成时进行回调
+        resolve(result)//这里的resolve时外层调用，一旦resolve就会将结果传给下层的then
+      })
     })
+  }).then(result => {
+
     res.status(200).send({
       status: 0, // 0 表示处理成功。 1 表示处理失败
       msg: 'GET 请求成功！', // 状态的描述
       data: result, // 需要响应给客户端的数据
     })
+
   }).catch(err => {
     res.status(500).send({
       status: 1, // 0 表示处理成功。 1 表示处理失败
@@ -342,6 +428,93 @@ router.get('/article/getArticleByCategory', (req, res) => {
   })
 })
 
+//根据标签分页查找文章
+router.get('/article/getArticleByTag', (req, res) => {
+  let tagname = req.query.tagname;
+
+  new Promise((resolve, reject) => {
+    const pageNum = parseInt(req.query.page);
+    const pageSize = 10;
+    let start = pageSize * (pageNum - 1);
+    let end = start + pageSize;
+    connection.query(searchArticlesByTagSql, [tagname, start, end], function (err, result) {
+      if (err) {
+        console.log('[SELECT ERROR]:', err.message);
+        reject(err)
+      }
+      resolve(result);
+    })
+  }).then(result => {
+    let list = [];
+    return new Promise(resolve => {
+      result.forEach(ele => {
+        list.push(new Promise(resolve => {
+          connection.query(searchArticleTagsSql, ele.id, function (err, re) {
+            if (err) {
+              console.log('[SELECT ERROR]:', err.message);
+              reject(err)
+            }
+            ele.date = ele.date.toLocaleString().slice(0, 9);//标准时间的年月日，没有具体时间
+            ele.tags = [];//每个元素的tag数组，由于每次查找返回的是对象，要转化成需要获得的字符串再push
+            re.forEach(tag => {
+              ele.tags.push(tag.tagname)
+            });
+            resolve();
+          })
+        }))
+      })
+      Promise.all(list).then(() => {
+        //all用于解决多个异步操作完成时进行回调
+        resolve(result)//这里的resolve时外层调用，一旦resolve就会将结果传给下层的then
+      })
+    })
+  }).then(result => {
+    res.status(200).send({
+      status: 0, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求成功！', // 状态的描述
+      data: result, // 需要响应给客户端的数据
+    })
+
+  }).catch(err => {
+    res.status(500).send({
+      status: 1, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求失败！', // 状态的描述
+      data: err, // 需要响应给客户端的数据
+    })
+  })
+})
+
+//查询标签中文章数量
+router.get('/article/getArticleCountByTag', (req, res) => {
+  const tagname = req.query.tagname;
+  new Promise((resolve, reject) => {
+    connection.query(searchArticleNumByTagSql, tagname, function (err, result) {
+      if (err) {
+        console.log('[SELECT ERROR]:', err.message);
+        reject(err)
+      }
+      //数据库查询结果返回到result中
+      resolve(result)
+    })
+  }).then((result) => {
+    // 调用 res.send() 方法，向客户端响应处理的结果
+
+    console.log(result)
+    res.send({
+      status: 0, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求成功！', // 状态的描述
+      data: result, // 需要响应给客户端的数据
+
+    });
+  }).catch(err => {
+    res.status(500).send({
+      status: 1, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求失败！', // 状态的描述
+      data: err, // 需要响应给客户端的数据
+
+    });
+  })
+})
 
 // 用于添加文章
 router.post('/article/add', (req, res) => {
@@ -350,20 +523,12 @@ router.post('/article/add', (req, res) => {
   let mdcontent = req.body.content;
   let htmlcontent = marked(mdcontent);//将markdown转化为html
 
-
-  let filepath = './public/md/' + filename + '.md';
-
-  fs.writeFile(filepath, mdcontent, function (err) {
-    if (!err) {
-      console.log('写入成功~~~');
-    }
-    else {
-      console.log('写入失败');
-    }
-  })
+  let tags = req.body.tags;
+  console.log(tags)
 
 
-  let reqpath = ip + filepath.replace('./public', '');//localhost:3000/public/.md网络地址
+
+  // let reqpath = ip + filepath.replace('./public', '');//localhost:3000/public/.md网络地址
 
   let sum = 0;
 
@@ -378,36 +543,61 @@ router.post('/article/add', (req, res) => {
       //正则取出当前数量
       sum = JSON.stringify(result).replace(/[^0-9]/ig, "");
       let id = sum * 1 + 1;//转化为数字number
-      console.log(id)
-      resolve(id);
 
+      id = uuid.v1().slice(-12, -1);
+      resolve(id);
     });
 
   }).then((id) => {
+    let filepath = './public/md/' + id + '.md';
+    console.log(filepath)
+    fs.writeFile(filepath, mdcontent, function (err) {
+      if (!err) {
+        console.log('写入成功~~~');
 
+      }
+      else {
+        console.log('写入失败');
+        Promise.reject(err)
+      }
+    })
+    return [id, filepath];
+
+  }).then(([id, filepath]) => {
+    console.log(id, filepath);
     let insertSqlParams = [id, req.body['title'], filepath, req.body['classify'], req.body['describe'], req.body['date']]//传入insert的值
     connection.query(insertArticleSql, insertSqlParams, function (err, result) {
       if (err) {
         console.log('[INSERT ERROR] - ', err.message);
-
         throw err;
       }
 
+      tags.forEach((tagname) => {
+        connection.query(insertTagRelateSql, [id, tagname], function (err, result) {
+          if (err) {
+            console.log('[INSERT ERROR] - ', err.message);
+            throw err;
+          }
+          // 调用 res.send() 方法，向客户端响应结果
 
-      // 调用 res.send() 方法，向客户端响应结果
-      res.send({
+        });
+      })
+
+
+      res.status(200).send({
         status: 0,
         msg: 'POST 请求成功！',
         data: result,
       });
     });
-
   }).catch((err) => {
     console.log(err)
+    res.status(500).send({
+      status: 1,
+      msg: 'POST 请求失败！',
+      data: err,
+    });
   })
-
-
-
 });
 
 //接收图片接口
@@ -474,7 +664,7 @@ router.get('/article/getArticleById', function (req, res) {
     fs.readFile(article.content, function (err, data) {
       if (err) {
         console.log(err);
-        reject(err);
+        Promise.reject(err);
       } else {
         console.log(data.toString());
         console.log(data.length + ' bytes');
@@ -504,7 +694,7 @@ router.get('/article/getArticleById', function (req, res) {
 
 })
 
-
+//获得所有分类列表名
 router.get('/article/getCategoryList', (req, res) => {
   new Promise((resolve, reject) => {
     connection.query(categoryListSql, function (err, result) {
@@ -541,12 +731,99 @@ router.get('/article/getCategoryList', (req, res) => {
 });
 
 
+//根据id删除文章
+router.get('/article/articleDeleteById', (req, res) => {
+  let id = req.query.id;
+  console.log(id)
+  new Promise((resolve, reject) => {
+    connection.query(deleteArticleSql, id, function (err, result) {
+      if (err) {
+        console.log('[SELECT ERROR]:', err.message);
+        reject('[SELECT ERROR]:', err.message);
+      }
+      resolve(result);
+    })
+  }).then((result) => {
+    res.send({
+      status: 0, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求成功！', // 状态的描述
+      data: result, // 需要响应给客户端的数据
+    });
+  }).catch((err) => {
+    res.status(500).send({
+      status: 1, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求失败！', // 状态的描述
+      data: err, // 需要响应给客户端的数据
+
+    })
+  })
+})
 
 
 
+//查找所有标签
+router.get('/article/getAllTags', (req, res) => {
+  new Promise((resolve, reject) => {
+    connection.query(searchAllTagsSql, function (err, result) {
+      if (err) {
+        console.log('[SELECT ERROR]:', err.message);
+        reject(err)
+      }
+      //数据库查询结果返回到result中
+      resolve(result)
+    })
+  }).then((result) => {
+    let response = [];
+    result.forEach(ele => {
+      response.push(ele.tagname);
+    })
+    console.log(response)
+    // 调用 res.send() 方法，向客户端响应处理的结果
+    res.send({
+      status: 0, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求成功！', // 状态的描述
+      data: response, // 需要响应给客户端的数据
+    });
+  }).catch(err => {
+    console.log(err)
+    res.status(500).send({
+      status: 1, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求失败！', // 状态的描述
+      data: err, // 需要响应给客户端的数据
+    });
+  })
+})
 
+//添加标签
+router.post('/article/addTag', (req, res) => {
+  const tagname = req.body.tagname;
 
+  console.log(tagname)
+  new Promise((resolve, reject) => {
+    connection.query(insertTagSql, tagname, function (err, result) {
+      if (err) {
+        console.log('[INSERT ERROR]:', err.message);
+        reject(err)
+      }
+      //数据库查询结果返回到result中
+      resolve(result)
+    })
+  }).then((result) => {
+    // 调用 res.send() 方法，向客户端响应处理的结果
+    res.send({
+      status: 0, // 0 表示处理成功。 1 表示处理失败
+      msg: 'POST 请求成功！', // 状态的描述
+      data: result, // 需要响应给客户端的数据
 
+    });
+  }).catch(err => {
+    res.status(500).send({
+      status: 1, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求失败！', // 状态的描述
+      data: err, // 需要响应给客户端的数据
+    });
+  })
+})
 
 
 

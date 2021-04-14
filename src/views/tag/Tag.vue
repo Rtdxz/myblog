@@ -3,7 +3,7 @@
     <Header></Header>
 
     <div class="container">
-      <h1>{{ title }}</h1>
+      <h1>标签页</h1>
       <div>
         <el-row :gutter="30">
           <el-col :sm="24" :md="16"
@@ -30,7 +30,7 @@ import SideBar from "@/components/content/Sidebar";
 
 import { request } from "@/network/request";
 export default {
-  name: "Category",
+  name: "Tag",
   components: {
     ArticleList,
     SideBar,
@@ -62,24 +62,30 @@ export default {
     loadData() {
       request({
         method: "get",
-        url: "/api/article/getArticleCountByCategory",
+        url: "/api/article/getArticleCountByTag",
         params: {
-          category: this.$route.params.category,
+          tagname: this.$route.params.tagname,
         },
       }).then((res) => {
+        let num;
         //this.articles = res.data.data;
-        let num = parseInt(JSON.stringify(res.data.data[0]).match(/(\d+)/g));
+        if (res.data.data.length == 0) {
+          num = 0;
+        } else {
+          num = parseInt(JSON.stringify(res.data.data[0]).match(/(\d+)/g));
+        }
+
         this.page_count = num;
       });
       let _this = this;
       this.page += 1;
-      this.title = this.$route.params.category;
-      console.log(this.$route.params.category);
+      //this.title = this.$route.params.tag;
+      console.log(this.$route.params.tagname);
       request({
         method: "get",
-        url: "/api/article/getArticleByCategory",
+        url: "/api/article/getArticleByTag",
         params: {
-          category: _this.$route.params.category,
+          tagname: _this.$route.params.tagname,
           page: _this.page,
         },
       }).then((res) => {

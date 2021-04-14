@@ -1,73 +1,119 @@
 <template>
-  <el-table :data="tableData" style="width: 100%">
-    <el-table-column label="日期" width="180">
-      <template slot-scope="scope">
-        <i class="el-icon-time"></i>
-        <span style="margin-left: 10px">{{ scope.row.date }}</span>
-      </template>
-    </el-table-column>
-    <el-table-column label="姓名" width="180">
-      <template slot-scope="scope">
-        <el-popover trigger="hover" placement="top">
-          <p>姓名: {{ scope.row.name }}</p>
-          <p>住址: {{ scope.row.address }}</p>
-          <div slot="reference" class="name-wrapper">
-            <el-tag size="medium">{{ scope.row.name }}</el-tag>
-          </div>
-        </el-popover>
-      </template>
-    </el-table-column>
-    <el-table-column label="操作">
-      <template slot-scope="scope">
-        <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
-          >编辑</el-button
+  <div>
+    <div class="box">
+      <div class="header">
+        <span>id</span><span>标题</span><span>简述</span><span>时间</span
+        ><span>操作</span>
+      </div>
+      <div
+        v-for="article in articles.slice(page * 10, page * 10 + 9)"
+        :key="article.id"
+        class="body"
+      >
+        <span>{{ article.id }}</span
+        ><span>{{ article.title }}</span> <span>{{ article.describes }}</span>
+        <span>{{ article.date }}</span>
+        <span
+          ><el-button
+            type="primary"
+            icon="el-icon-edit"
+            size="small"
+            circle
+          ></el-button>
+          <el-button
+            type="danger"
+            icon="el-icon-delete"
+            size="small"
+            @click="deleteArticle(article.id)"
+            circle
+          ></el-button
+        ></span>
+      </div>
+      <div class="footer">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="articles.length"
+          @current-change="handleCurrentChange"
         >
-        <el-button
-          size="mini"
-          type="danger"
-          @click="handleDelete(scope.$index, scope.row)"
-          >删除</el-button
-        >
-      </template>
-    </el-table-column>
-  </el-table>
+        </el-pagination>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
+import { request } from "@/network/request";
 export default {
   data() {
     return {
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄",
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄",
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄",
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄",
-        },
-      ],
+      articles: [],
+      page: 0,
     };
   },
+  created() {
+    this.getArticle();
+  },
   methods: {
-    handleEdit(index, row) {
-      console.log(index, row);
+    handleCurrentChange(val) {
+      console.log(val);
+      this.page = val - 1;
     },
-    handleDelete(index, row) {
-      console.log(index, row);
+    getArticle() {
+      let _this = this;
+      request({
+        url: "/api/article/getAllArticles",
+        methods: "get",
+      }).then((res) => {
+        _this.articles = res.data.data;
+      });
+    },
+    deleteArticle(id) {
+      console.log(id);
+      let _this = this;
+      request({
+        url: "/api/article/articleDeleteById",
+        methods: "get",
+        params: {
+          id: id,
+        },
+      }).then((res) => {
+        if (res.status == "200") {
+          console.log(res);
+          _this.getArticle();
+        } else {
+          alert("系统出小差了");
+        }
+      });
     },
   },
 };
 </script>
+<style  lang="scss" scoped>
+.box {
+  margin: 30px;
+  .header,
+  .body {
+    display: flex;
+    border-bottom: 1px solid #eee;
+    span {
+      flex: 1;
+      height: 50px;
+      line-height: 50px;
+      padding-left: 20px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  .header {
+    span {
+      text-align-last: left;
+      color: #909399;
+    }
+  }
+}
+.footer {
+  margin: 40px auto;
+  text-align: center;
+}
+</style>

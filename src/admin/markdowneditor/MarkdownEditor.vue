@@ -1,5 +1,20 @@
 <template>
   <div class="wrap">
+    <el-card class="tag-box" v-if="isTagEdit"
+      ><el-input size="small" v-model="newtag"></el-input>
+      <el-button size="small" @click="addtag"> 新建标签</el-button>
+      <div class="tagcontain">
+        <span
+          :class="{ tagclick: selecttags.indexOf(tag) != '-1' }"
+          class="tag"
+          v-for="(tag, index) in alltags"
+          :key="index"
+          @click="selectTag(tag)"
+          >{{ tag }}</span
+        >
+      </div>
+      <el-button size="small" @click="finishAddTag"> 完成</el-button></el-card
+    >
     <h1>编写博客</h1>
     <el-form ref="form" :model="article" label-width="80px" :rules="rules">
       <el-form-item label="标题" prop="title"
@@ -13,6 +28,12 @@
           <el-option label="编程" value="编程"></el-option>
           <el-option label="日常" value="日常"></el-option>
         </el-select>
+      </el-form-item>
+      <el-form-item label="标签" prop="tag">
+        <span class="tag" v-for="(tag, index) in currenttags" :key="index">{{
+          tag
+        }}</span>
+        <el-button @click="showTagBox"> 添加</el-button>
       </el-form-item>
       <!-- <mavon-editor v-model="content" /> -->
       <mavon-editor
@@ -43,8 +64,14 @@ export default {
   name: "MarkDownEditor",
   components: {},
   directives: {},
+  created() {},
   data() {
     return {
+      isTagEdit: false,
+      alltags: [],
+      currenttags: [],
+      selecttags: [],
+      newtag: "",
       article: {
         title: "",
         content: "",
@@ -68,10 +95,50 @@ export default {
   },
   mounted() {},
   methods: {
+    showTagBox() {
+      let _this = this;
+      request({
+        url: "/api/article/getAllTags",
+        methods: "get",
+      }).then((res) => {
+        console.log(res);
+        _this.alltags = res.data.data;
+
+        _this.isTagEdit = !_this.isTagEdit;
+      });
+    },
+    selectTag(tag) {
+      if (this.selecttags.indexOf(tag) == "-1" && this.selecttags.length < 5)
+        this.selecttags.push(tag);
+    },
+    finishAddTag() {
+      this.currenttags = this.selecttags;
+      this.isTagEdit = !this.isTagEdit;
+      this.selecttags = [];
+    },
+    addtag() {
+      let _this = this;
+      request({
+        url: "/api/article/addTag",
+        method: "post",
+        data: {
+          tagname: _this.newtag,
+        },
+      }).then((res) => {
+        console.log(res);
+        request({
+          url: "/api/article/getAllTags",
+          methods: "get",
+        }).then((res) => {
+          console.log(res);
+          _this.alltags = res.data.data;
+        });
+      });
+    },
+
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!");
           this.submit();
         } else {
           console.log("error submit!!");
@@ -139,15 +206,56 @@ export default {
     //提交
     submit() {
       let _this = this;
-      _this.article.date = new Date().toJSON().slice(0, 10); //设置发布时间
+      _this.article.date = this.timeFormatter(); //设置发布时间
       console.log(_this.article.date);
+      _this.article.tags = this.currenttags;
       request({
         method: "post",
         url: "/api/article/add",
         data: _this.article,
       }).then((res) => {
         console.log(res);
+        if (res.status == "200") {
+          alert("submit sucess!");
+        } else {
+          alert("系统开小差");
+        }
       });
+    },
+    timeFormatter() {
+      var datetime = new Date();
+      let year = datetime.getFullYear();
+      let month = datetime.getMonth() + 1;
+      let date = datetime.getDate();
+      let hour = datetime.getHours();
+      let minutes = datetime.getMinutes();
+      let second = datetime.getSeconds();
+      if (month < 10) {
+        month = "0" + month;
+      }
+      if (date < 10) {
+        date = "0" + date;
+      }
+      if (hour < 10) {
+        hour = "0" + hour;
+      }
+      if (minutes < 10) {
+        minutes = "0" + minutes;
+      }
+
+      return (
+        year +
+        "-" +
+        month +
+        "-" +
+        date +
+        " " +
+        hour +
+        ":" +
+        minutes +
+        ":" +
+        second
+      );
     },
   },
 };
@@ -156,6 +264,8 @@ export default {
 <style lang="sass" scoped>
 $blue-color: #409eff
 
+.wrap
+  position: relative
 .span
   height: 40px
   line-height: 40px
@@ -174,4 +284,39 @@ h1
   margin-left: 40px
 
   margin-bottom: 50px
+.tag-box
+  width: 476px
+  height: auto
+
+  position: absolute
+  left: 50%
+  top: 50%
+  transform: translate(-50%,-150%)
+  z-index: 99999
+
+  .el-input
+    width: 70%
+    margin: 0 30px 20px 0
+.tag
+  text-align: center
+  display: inline-block
+  width: auto
+  padding: 0 10px 0
+  height: 30px
+  line-height: 30px
+  background: transparent
+  border: 1px solid #ddd
+  font-size: 12px
+  color: #797979
+  border-radius: 2px
+  margin-right: 5px
+.tag:hover
+  background: lightblue
+  color: #ffffff
+  cursor: pointer
+.tagcontain
+  margin-bottom: 20px
+.tagclick
+  background: lightblue
+  color: #ffffff
 </style>

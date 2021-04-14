@@ -15,17 +15,39 @@
         </div>
       </div>
     </div>
+    <div class="center">
+      <div class="content-head">分类</div>
+      <div class="center-content">
+        <div
+          class="category"
+          v-for="category in categoryList"
+          :key="category.classify"
+        >
+          <router-link :to="'/categories/' + category.classify"
+            >{{ category.classify }}
+            <span>{{ category.sum }}</span></router-link
+          >
+        </div>
+      </div>
+    </div>
     <div class="bottom">
-      <div>最近文章</div>
-      <div></div>
+      <div class="content-head">标签</div>
+      <div>
+        <Tag :UnderTheFlagType="alltags" @clickTag="moveToOtherPage"></Tag>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Tag from "@/components/common/Tag";
+import { request } from "@/network/request";
+
 export default {
   name: "Personalcard",
-  components: {},
+  components: {
+    Tag,
+  },
   directives: {},
   props: {
     visitorVolume: {
@@ -38,10 +60,39 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      alltags: [1332, 2, 3, 4],
+      categoryList: [],
+    };
+  },
+  created() {
+    this.getCategoryList();
+    this.getAllTags();
   },
   mounted() {},
-  methods: {},
+  methods: {
+    moveToOtherPage(target) {
+      this.$router.push("/tag/" + target);
+    },
+    getCategoryList() {
+      request({
+        url: "/api/article/getCategoryList",
+        methods: "get",
+      }).then((res) => {
+        this.categoryList = res.data.data;
+        console.log(this.categoryList);
+      });
+    },
+    getAllTags() {
+      request({
+        url: "/api/article/getAllTags",
+        methods: "get",
+      }).then((res) => {
+        console.log(res);
+        this.alltags = res.data.data;
+      });
+    },
+  },
 };
 </script>
 
@@ -58,8 +109,8 @@ export default {
 .profile-picture {
   max-width: 170px;
   // border: 1px solid rgba(0, 0, 0, 0.1);
-  width: 70%px;
-  height: 70%px;
+  width: 50%;
+  height: 50%;
   border-radius: 50%;
   overflow: hidden;
   margin: 0 auto;
@@ -88,7 +139,39 @@ export default {
   font-size: 30px;
   font-weight: 700;
 }
+.center {
+  margin: 30px 40px 0;
+  border-bottom: 2px solid rgb(220, 223, 230);
+}
 .bottom {
   margin: 30px 40px 0;
+}
+.content-head {
+  margin-bottom: 20px;
+}
+.center-content {
+  margin-bottom: 20px;
+  .category {
+    a {
+      display: inline-block;
+      width: 100%;
+      height: 40px;
+      padding-left: 20px;
+      box-sizing: border-box;
+      // border: 1px solid #ddd;
+      color: black;
+      text-decoration: none;
+      text-align: left;
+      line-height: 40px;
+      position: relative;
+      span {
+        position: absolute;
+        right: 10px;
+      }
+    }
+    a:hover {
+      background-color: #eee;
+    }
+  }
 }
 </style>

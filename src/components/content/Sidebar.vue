@@ -36,6 +36,5 @@ export default {
 .side-bar {
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
   /* background-color: orange; */
-  height: 600px;
 }
 </style>

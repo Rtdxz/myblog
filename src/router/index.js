@@ -11,7 +11,9 @@ import Message from '@/views/message/Message'
 import About from '@/views/about/About'
 import Archive from '@/views/archive/Archive'
 import Category from '@/views/category/Category'
+import Tag from '@/views/tag/Tag'
 
+import Admin from '@/admin/adminindex/Admin'
 import Markdown from '@/admin/markdowneditor/MarkdownEditor'
 import AdminIndex from '@/admin/adminindex/AdminIndex'
 import ArticleManage from '@/admin/articlemanage/ArticleManage'
@@ -50,16 +52,19 @@ const routes = [
 
   {
     path: '/admin',
-    component: AdminIndex,
-    children: [
-      {
-        path: 'articleWrite',
-        component: Markdown
-      },
-      {
-        path: 'articleManage',
-        component: ArticleManage
-      }
+    component: Admin,
+    children: [{
+      path: '',
+      component: AdminIndex
+    },
+    {
+      path: 'articleWrite',
+      component: Markdown
+    },
+    {
+      path: 'articleManage',
+      component: ArticleManage
+    }
     ]
   },
   {
@@ -69,6 +74,10 @@ const routes = [
   {
     path: '/categories/:category',
     component: Category
+  },
+  {
+    path: '/tag/:tagname',
+    component: Tag
   },
   {
     path: '/login',

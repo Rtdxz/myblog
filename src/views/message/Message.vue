@@ -135,6 +135,9 @@ export default {
 </script>
 
 <style  scoped>
+.el-button {
+  margin-top: 20px;
+}
 .el-input {
   width: 300px;
 }
