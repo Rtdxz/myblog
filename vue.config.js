@@ -1,30 +1,18 @@
 'use strict'
-const path = require('path')
 module.exports = {
-  /* dev: {
-    // Paths
-    assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
-    proxyTable: {
+  devServer: {
+    host: '0.0.0.0', // 允许外部ip访问
+    port: 9080, // 端口
+    https: true, // 启用https
+    proxy: {
       '/api': {
-        target: 'https://api.imjad.cn/',//后端接口地址
-        changeOrigin: true,//是否允许跨越
+        target: 'https://music.163.com',
+        changeOrigin: true,
+        secure: false,
         pathRewrite: {
-          '^/api': '/api',//重写,
+          '^/api': ''
         }
       }
-    },
-    host: '192.168.0.104',
-    port: 8082,
-    autoOpenBrowser: false,
-    errorOverlay: true,
-    notifyOnErrors: true,
-    poll: false,
-    useEslint: true,
-    showEslintErrorsInOverlay: false,
-    devtool: 'eval-source-map',
-    cacheBusting: true,
-    cssSourceMap: false,
-  }, */
-
+    }
+  }
 }

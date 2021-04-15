@@ -9,7 +9,8 @@ export function request(config) {
   });
   instance.interceptors.request.use(config => {
     if (localStorage.token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
-      config.headers.Authorization = `token ${localStorage.token}`;//这个字符串里的token可以不写
+      config.headers.Authorization = `${localStorage.token}`;//这个字符串里的token可以不写
+
     }
     return config
   }, err => err);

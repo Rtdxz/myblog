@@ -3,7 +3,7 @@
     <Header></Header>
 
     <div class="container">
-      <div class="box">
+      <div class="box" v-loading="loading">
         <div class="article-header">
           <h1>{{ article.title }}</h1>
           <div class="info">
@@ -49,6 +49,7 @@ export default {
       content: "",
       title: "",
       titleArray: [],
+      loading: true,
     };
   },
   created() {
@@ -64,11 +65,11 @@ export default {
       let article = res.data.data;
       //console.log(article);
       this.article = article;
+      this.getArticleArray();
+      this.loading = false;
     });
   },
-  mounted() {
-    this.getArticleArray();
-  },
+  mounted() {},
   methods: {
     //生成标题数组
     getArticleArray() {
@@ -101,10 +102,6 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  width: 75%;
-  margin: 100px auto;
-}
 .box {
   padding: 10px;
   padding-top: 20px;
@@ -127,7 +124,7 @@ export default {
 }
 @media screen and (max-width: 800px) {
   .padding {
-    padding: 0;
+    padding: 20px;
   }
 }
 </style>

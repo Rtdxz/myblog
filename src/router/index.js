@@ -6,23 +6,42 @@ Vue.use(VueRouter);
 
 
 
-import Home from '@/views/home/Home'
-import Message from '@/views/message/Message'
-import About from '@/views/about/About'
-import Archive from '@/views/archive/Archive'
-import Category from '@/views/category/Category'
-import Tag from '@/views/tag/Tag'
+// import Home from '@/views/home/Home'
+// import Message from '@/views/message/Message'
+// import About from '@/views/about/About'
+// import Archive from '@/views/archive/Archive'
+// import Category from '@/views/category/Category'
+// import Tag from '@/views/tag/Tag'
 
-import Admin from '@/admin/adminindex/Admin'
-import Markdown from '@/admin/markdowneditor/MarkdownEditor'
-import AdminIndex from '@/admin/adminindex/AdminIndex'
-import ArticleManage from '@/admin/articlemanage/ArticleManage'
+// import Admin from '@/admin/adminindex/Admin'
+// import Markdown from '@/admin/markdowneditor/MarkdownEditor'
+// import AdminIndex from '@/admin/adminindex/AdminIndex'
+// import ArticleManage from '@/admin/articlemanage/ArticleManage'
 
-import ArticleDetail from '@/views/article/ArticleDetail'
+// import ArticleDetail from '@/views/article/ArticleDetail'
 
-import Login from '@/views/login/Login'
+// import Login from '@/views/login/Login'
 
-import ErrorPage from '@/views/404'
+// import ErrorPage from '@/views/404'
+
+//懒加载
+const Home = () => import('@/views/home/Home');
+const Message = () => import('@/views/message/Message')
+const About = () => import('@/views/about/About')
+const Archive = () => import('@/views/archive/Archive')
+const Category = () => import('@/views/category/Category')
+const Tag = () => import('@/views/tag/Tag')
+
+const Admin = () => import('@/admin/adminindex/Admin')
+const Markdown = () => import('@/admin/markdowneditor/MarkdownEditor')
+const AdminIndex = () => import('@/admin/adminindex/AdminIndex')
+const ArticleManage = () => import('@/admin/articlemanage/ArticleManage')
+
+const ArticleDetail = () => import('@/views/article/ArticleDetail')
+
+const Login = () => import('@/views/login/Login')
+
+const ErrorPage = () => import('@/views/404')
 
 const routes = [
   {
@@ -100,7 +119,7 @@ router.beforeEach((to, from, next) => {
   } else {
     if (to.path == '/login') { //如果是登录页面路径，就直接next()
       next();
-    } else if (to.path == '/admin') { //不然就跳转到登录；
+    } else if (to.path == '/admin' || to.path == '/admin/articleWrite' || to.path == '/admin/articleManage') { //不然就跳转到登录；
       alert('您尚未登录，先登录！！')
       next('/login');
     }

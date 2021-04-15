@@ -15,9 +15,9 @@ export default {
 <style>
 @import "assets/css/base.css";
 @import "assets/css/markdown.css";
-* {
+/* * {
   transition: ease-out 0.1s;
-}
+} */
 .nomore {
   width: 100%;
   text-align: center;
@@ -26,13 +26,14 @@ export default {
 }
 .container {
   max-width: 80%;
-  margin: 120px auto;
+  margin: 60px auto;
   min-height: 800px;
 }
+
 @media screen and (max-width: 800px) {
   .container {
     max-width: 95% !important;
-    margin: 100px auto;
+    margin: 30px auto;
   }
 }
 </style>

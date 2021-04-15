@@ -10,10 +10,39 @@
         active-text-color="#ffd04b"
         :default-active="$route.path"
       >
-        <el-menu-item index="/home" @click="moveToOtherPage('/home')"
+        <el-submenu class="hidden-md-and-up" index="/i">
+          <template slot="title"><i class="el-icon-s-unfold"></i></template>
+          <el-menu-item index="/home" @click="moveToOtherPage('/home')"
+            >首页</el-menu-item
+          >
+          <el-submenu index="3">
+            <template slot="title">分类</template>
+            <el-menu-item
+              @click="moveToOtherPage('/categories/' + category.classify)"
+              index="'/categories/' + category.classify"
+              v-for="category in categoryList"
+              :key="category.classify"
+              >{{ category.classify }}</el-menu-item
+            >
+          </el-submenu>
+          <el-menu-item index="/archive" @click="moveToOtherPage('/archive')"
+            >归档</el-menu-item
+          >
+          <el-menu-item index="/message" @click="moveToOtherPage('/message')"
+            >留言板</el-menu-item
+          >
+          <el-menu-item index="/about" @click="moveToOtherPage('/about')"
+            >关于</el-menu-item
+          ></el-submenu
+        >
+
+        <el-menu-item
+          index="/home"
+          @click="moveToOtherPage('/home')"
+          class="hidden-sm-and-down"
           >首页</el-menu-item
         >
-        <el-submenu index="2">
+        <el-submenu index="2" class="hidden-sm-and-down">
           <template slot="title">分类</template>
           <el-menu-item
             @click="moveToOtherPage('/categories/' + category.classify)"
@@ -23,15 +52,25 @@
             >{{ category.classify }}</el-menu-item
           >
         </el-submenu>
-        <el-menu-item index="/archive" @click="moveToOtherPage('/archive')"
+        <el-menu-item
+          index="/archive"
+          @click="moveToOtherPage('/archive')"
+          class="hidden-sm-and-down"
           >归档</el-menu-item
         >
-        <el-menu-item index="/message" @click="moveToOtherPage('/message')"
+        <el-menu-item
+          index="/message"
+          @click="moveToOtherPage('/message')"
+          class="hidden-sm-and-down"
           >留言板</el-menu-item
         >
-        <el-menu-item index="/about" @click="moveToOtherPage('/about')"
+        <el-menu-item
+          index="/about"
+          @click="moveToOtherPage('/about')"
+          class="hidden-sm-and-down"
           >关于</el-menu-item
         >
+
         <!-- <el-menu-item
           index="5"
           class="user-info"
@@ -101,13 +140,13 @@ export default {
 
 <style scoped>
 .header {
-  margin-bottom: 60px;
+  /* margin-bottom: 60px; */
 }
 .header-nav {
-  position: fixed;
+  /* position: fixed;
   top: 0;
   left: 0;
-  right: 0;
+  right: 0; */
   z-index: 100;
 }
 
@@ -123,6 +162,17 @@ export default {
   top: 0;
 }
 .el-menu {
+  min-height: 60px;
   border-bottom: none; /* 去除默认下边框 */
+}
+/deep/ .el-icon-arrow-down {
+  /* content: "1" !important; */
+  display: none !important;
+}
+
+@media screen and (max-width: 996px) {
+  .el-menu {
+    border-bottom: none; /* 去除默认下边框 */
+  }
 }
 </style>

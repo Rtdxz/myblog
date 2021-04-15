@@ -30,6 +30,7 @@ Vue.config.productionTip = false
 Vue.prototype.$axios = axios
 
 
+
 router.afterEach((to, from, next) => {
 
   window.scrollTo(0, 0);

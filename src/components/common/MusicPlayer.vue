@@ -1,31 +1,49 @@
 <template>
-  <div class="player">
-    <audio :src="musicUrl" autoplay="" controls=""></audio>
+  <div>
+    <aplayer autoplay :music="current" :list="audio"></aplayer>
   </div>
 </template>
 
 <script>
+import aplayer from "vue-aplayer";
+
 export default {
   name: "MusicPlayer",
-  components: {},
+  components: { aplayer },
   directives: {},
   data() {
     return {
-      musicUrl: "",
+      current: {
+        src:
+          "https://m7.music.126.net/20210416004412/a6e8570f5fa62f73a0ad232b0e8d86e9/ymusic/obj/w5zDlMODwrDDiGjCn8Ky/3418907157/fc20/2177/208d/47a61bb2b1c97216a63688f5bdee89df.mp3",
+      },
+
+      audio: [],
     };
   },
   created() {
+    let _this = this;
     this.$axios
-      .get("https://api.imjad.cn/cloudmusic/?type=song&id=4992343")
+      .get("/api/api/playlist/detail?id=690960343", {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36",
+        },
+      })
       .then((res) => {
-        // console.log(res.data.data[0]);
-        this.musicUrl = res.data.data[0].url;
+        res.data.result.tracks.forEach((ele) => {
+          this.$axios
+            .get("https://api.imjad.cn/cloudmusic/?id=" + ele.id)
+            .then((res) => {
+              console.log(res.data.data[0].url);
+              _this.audio.push({
+                name: res.data.data[0].id,
+                src: res.data.data[0].url,
+              });
+            });
+        });
       });
-    this.$axios
-      .get("https://api.imjad.cn/cloudmusic/?type=playlist&id=690960343")
-      .then((res) => {
-        console.log(res.data.playlist.tracks);
-      });
+    console.log(this.audio);
   },
   mounted() {},
   methods: {},

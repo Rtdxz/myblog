@@ -1,9 +1,12 @@
 <template>
   <div>
     <Header></Header>
-    <div class="header-img">
+    <div class="header-img" v-loading="loading">
       <!-- <h1 class="title">RT的博客</h1> -->
-      <img src="~@/assets/img/93b3330befbe923b8ae1e154fd14fab8.jpg" alt="" />
+      <img
+        src="~@/assets/img/93b3330befbe923b8ae1e154fd14fab8.jpg"
+        alt="图片加载失败"
+      />
       <to-bottom-button />
     </div>
 
@@ -16,13 +19,16 @@
             <el-button v-if="page * 10 < page_count" @click="loadMore"
               >点击加载更多</el-button
             >
+            <div class="nomore" v-else-if="isloading">
+              <i class="el-icon-loading"></i>
+            </div>
             <div class="nomore" v-else>没有更多了...</div>
           </el-col>
           <el-col :sm="24" :md="8"><side-bar></side-bar></el-col>
         </el-row>
       </div>
     </div>
-    <!-- <music-player></music-player> -->
+    <music-player></music-player>
     <Footer></Footer>
   </div>
 </template>
@@ -54,6 +60,8 @@ export default {
       articles: [],
       page: 1,
       page_count: 10,
+      isloading: false,
+      loading: true,
     };
   },
   created() {
@@ -78,9 +86,27 @@ export default {
       _this.page_count = num;
     });
   },
-  mounted() {},
+  mounted() {
+    if (!this.imgLoad("@/assets/img/93b3330befbe923b8ae1e154fd14fab8.jpg")) {
+      this.loading = false;
+    }
+  },
   methods: {
+    //图片加载loading方法
+    imgLoad: (src) => {
+      let bgImg = new Image();
+      bgImg.src = src; // 获取背景图片的url
+      bgImg.onerror = () => {
+        console.log("img onerror");
+      };
+      bgImg.onload = () => {
+        // 等背景图片加载成功后 去除loading
+        console.log("加载完成");
+        return false;
+      };
+    },
     loadMore: function () {
+      this.isloading = true;
       this.page += 1;
       this.getArticle({
         page: this.page, //请求页数
@@ -88,6 +114,7 @@ export default {
         .then((res) => {
           console.log(res.data.data, this.page);
           this.articles = this.articles.concat(res.data.data); //将请求回来的数据和上一次进行组合
+          this.isloading = false;
         })
         .catch((err) => {
           this.$toast.fail("系统开小差,请重试");
@@ -110,7 +137,7 @@ export default {
 @keyframes display {
   /* 开始状态 */
   0% {
-    opacity: 0;
+    opacity: 0.1;
   }
   /* 结束状态 */
 

@@ -1,21 +1,22 @@
 const express = require('express')
 const router = express.Router();
-const ip = 'http://localhost:3000';
+const imageip = require('./image/imageip')
 const marked = require('marked');//将markdown语法转成html
-const jwt = require('jsonwebtoken')//设置token
+// const jwt = require('jsonwebtoken')//设置token
+var vertoken = require('./token/token')//引入token
+
 //使用multiparty接收文件
 var multiparty = require('multiparty');
 
 var fs = require('fs');//用于接收文件，读写文件
 
-var mysql = require('mysql');//mysql
-
 var uuid = require('node-uuid');//生成唯一id
-const { listLanguages } = require('highlight.js');
+
 
 
 //连接mysql
-var connection = mysql.createConnection({
+const connection = require('./db/connection').con
+/* var connection = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '123456',
@@ -23,6 +24,9 @@ var connection = mysql.createConnection({
 
 });
 connection.connect();
+ */
+
+
 
 //SQL语句
 //时间顺序查找所有文章
@@ -84,7 +88,8 @@ router.get('/article/getArticlesByTimeLine', (req, res) => {
     var newYear;
     result.forEach((ele, index) => {
       //ele.date = ele.date.toLocaleString();//将所有时间装化为标准时间
-      ele.year = ele.date.toLocaleString().slice(0, 4);//标准时间的年月日，没有具体时间
+      ele.year = ele.date.toLocaleString('zh').slice(0, 4);//标准时间的年月日，没有具体时间
+      console.log(ele.year)
       if (!set.has(ele.year)) {
         if (newYear) {            //有新的年份再把原先的年份push进total里
           total.push(newYear);
@@ -92,7 +97,7 @@ router.get('/article/getArticlesByTimeLine', (req, res) => {
         set.add(ele.year);      //设置新的年份
         newYear = { title: ele.year, articleList: [] }//设置新的年份信息
       }
-      newYear.articleList.push(JSON.parse(JSON.stringify({ title: ele.title, id: ele.id, date: ele.date.toLocaleString().slice(5, 9) })));//深拷贝一个对象
+      newYear.articleList.push(JSON.parse(JSON.stringify({ title: ele.title, id: ele.id, date: ele.date.toLocaleString('zh').slice(5, 9) })));//深拷贝一个对象
     })
     total.push(newYear)
     // console.log(result);
@@ -633,7 +638,7 @@ router.post('/article/add/images', function (req, res) {
           console.log('rename ok');
           res.writeHead(200, { 'content-type': 'text/plain;charset=utf-8' });
 
-          res.end(ip + dstPath.replace('./public', ''));
+          res.end(imageip + dstPath.replace('./public', ''));
           //res.end("{'status':400, 'message': '上传成功！'}");
         }
       });
@@ -873,12 +878,13 @@ router.post('/login', function (req, res) {
       return false;
     }
     else {
-      let content = { username: req.body.username }; // 要生成token的主题信息
+
+      /* let content = { username: req.body.username }; // 要生成token的主题信息
       let secretOrPrivateKey = "jwt";// 这是加密的key（密钥）
       //设置token
       let token = jwt.sign(content, secretOrPrivateKey, {
-        expiresIn: 60   // 1小时过期
-      });
+        expiresIn: 60 * 60   // 1小时过期
+      }); */
       if (password != result[0].password) {
         res.send({
           status: 1,
@@ -887,12 +893,20 @@ router.post('/login', function (req, res) {
         })
         return false;
       }
-      res.send({
-        status: '0',
-        msg: '密码正确',
-        token: token
+
+
+      let username = req.body.username;
+      vertoken.setToken(username).then((token) => {
+        res.send({
+          status: '0',
+          msg: '密码正确',
+          token: token
+        })
+        return true;
       })
-      return true;
+
+
+
     }
 
   })
