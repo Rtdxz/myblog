@@ -98,6 +98,8 @@
 
 <script>
 import { request } from "@/network/request";
+
+import { getCategoryList } from "@/network/network";
 export default {
   name: "Header",
   components: {},
@@ -127,10 +129,7 @@ export default {
       location.reload();
     },
     getCategoryList() {
-      request({
-        url: "/api/article/getCategoryList",
-        methods: "get",
-      }).then((res) => {
+      getCategoryList().then((res) => {
         this.categoryList = res.data.data;
       });
     },

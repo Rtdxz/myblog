@@ -27,7 +27,8 @@
 </template>
 
 <script>
-import { request } from "@/network/request";
+import { getArticleById } from "@/network/network";
+
 import Header from "@/components/content/Header";
 import Footer from "@/components/content/Footer";
 
@@ -53,14 +54,9 @@ export default {
     };
   },
   created() {
-    let _this = this;
     console.log(this.$route.params.articleId);
-    request({
-      url: "/api/article/getArticleById",
-      methods: "get",
-      params: {
-        id: _this.$route.params.articleId,
-      },
+    getArticleById({
+      id: this.$route.params.articleId,
     }).then((res) => {
       let article = res.data.data;
       //console.log(article);
@@ -95,6 +91,18 @@ export default {
           });
           console.log(this.$refs.markdown.getElementsByTagName("h1"));
         });
+
+        if (this.titleArray.length == 0) {
+          console.log("sssssssssssss");
+          this.$refs.markdown
+            .getElementsByTagName("h2")
+            .forEach((ele, index) => {
+              this.titleArray.push({
+                label: ele.innerText, //设置成label和children为了和element一样
+              });
+              ele.setAttribute("id", ele.innerText);
+            });
+        }
       }, 100);
     },
   },

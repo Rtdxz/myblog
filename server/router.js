@@ -217,11 +217,26 @@ router.post('/discussion/addMessage', (req, res) => {
 })
 
 
-//查询分类中文章数量
-router.get('/article/getArticleCountByCategory', (req, res) => {
-  const category = req.query.category;
+//查询某一类型中某一种类文章数量
+router.get('/article/getArticleCountByType', (req, res) => {
+  const type = req.query.type;
+  let param, sql;
+  if (type == 'tag') {
+    const tag = req.query.tagname
+    param = tag;
+    sql = searchArticleNumByTagSql;
+  }
+  else if (type == 'category') {
+    const category = req.query.category;
+    param = category;
+    sql = searchArticleNumByClassifySql;
+  }
+  else {
+    throw new Error('error type')
+  }
+
   new Promise((resolve, reject) => {
-    connection.query(searchArticleNumByClassifySql, category, function (err, result) {
+    connection.query(sql, param, function (err, result) {
       if (err) {
         console.log('[SELECT ERROR]:', err.message);
         reject(err)
@@ -352,7 +367,6 @@ router.get('/article/all', (req, res) => {
       //ele.date = ele.date.toLocaleString();//将所有时间装化为标准时间
       ele.date = ele.date.toLocaleString().slice(0, 9);//标准时间的年月日，没有具体时间
     })
-
     // 通过 req.query 获取客户端通过查询字符串，发送到服务器的数据
     const query = req.query;
     console.log(query)
@@ -361,7 +375,6 @@ router.get('/article/all', (req, res) => {
       status: 0, // 0 表示处理成功。 1 表示处理失败
       msg: 'GET 请求成功！', // 状态的描述
       data: result, // 需要响应给客户端的数据
-
     });
   }).catch(err => {
     res.status(500).send({
@@ -374,16 +387,30 @@ router.get('/article/all', (req, res) => {
 
 });
 
-//根据分类类型获取文章列表接口
-router.get('/article/getArticleByCategory', (req, res) => {
-  let category = req.query.category;
+//获取某一类型中分页截取多个文章
+router.get('/article/getArticlesByType', (req, res) => {
+  const type = req.query.type;
+  let param, sql;
+  if (type == 'tag') {
+    const tag = req.query.tagname
+    param = tag;
+    sql = searchArticlesBytagSql;
+  }
+  else if (type == 'category') {
+    const category = req.query.category;
+    param = category;
+    sql = searchArticlesByClassifySql;
+  }
+  else {
+    throw new Error('error type')
+  }
   console.log(category);
   new Promise((resolve, reject) => {
     const pageNum = parseInt(req.query.page);
-    const pageSize = 10;
+    const pageSize = req.query.pageSize || 10;
     let start = pageSize * (pageNum - 1);
     let end = start + pageSize;
-    connection.query(searchArticlesByClassifySql, [category, start, end], function (err, result) {
+    connection.query(sql, [param, start, end], function (err, result) {
       if (err) {
         console.log('[SELECT ERROR]:', err.message);
         reject(err)
@@ -401,7 +428,7 @@ router.get('/article/getArticleByCategory', (req, res) => {
               console.log('[SELECT ERROR]:', err.message);
               reject(err)
             }
-            ele.date = ele.date.toLocaleString().slice(0, 9);//标准时间的年月日，没有具体时间
+            ele.date = ele.date.toLocaleString('zh').slice(0, 9);//标准时间的年月日，没有具体时间
             ele.tags = [];//每个元素的tag数组，由于每次查找返回的是对象，要转化成需要获得的字符串再push
             re.forEach(tag => {
               ele.tags.push(tag.tagname)
@@ -416,20 +443,17 @@ router.get('/article/getArticleByCategory', (req, res) => {
       })
     })
   }).then(result => {
-
     res.status(200).send({
       status: 0, // 0 表示处理成功。 1 表示处理失败
       msg: 'GET 请求成功！', // 状态的描述
       data: result, // 需要响应给客户端的数据
     })
-
   }).catch(err => {
     res.status(500).send({
       status: 1, // 0 表示处理成功。 1 表示处理失败
       msg: 'GET 请求失败！', // 状态的描述
       data: err, // 需要响应给客户端的数据
     })
-
   })
 })
 
@@ -523,20 +547,14 @@ router.get('/article/getArticleCountByTag', (req, res) => {
 
 // 用于添加文章
 router.post('/article/add', (req, res) => {
-
-  let filename = req.body.title;
   let mdcontent = req.body.content;
-  let htmlcontent = marked(mdcontent);//将markdown转化为html
-
+  /*  let filename = req.body.title;
+    // let reqpath = ip + filepath.replace('./public', '');//localhost:3000/public/.md网络地址
+   let htmlcontent = marked(mdcontent); *///将markdown转化为html
   let tags = req.body.tags;
   console.log(tags)
-
-
-
-  // let reqpath = ip + filepath.replace('./public', '');//localhost:3000/public/.md网络地址
-
   let sum = 0;
-
+  let id = uuid.v1().slice(-12, -1);
   //异步调用mysql使用Promise,需要获得数量将ID传入
   let queryId = new Promise((resolve, reject) => {
     connection.query(numSql, function (err, result) {
@@ -549,7 +567,7 @@ router.post('/article/add', (req, res) => {
       sum = JSON.stringify(result).replace(/[^0-9]/ig, "");
       let id = sum * 1 + 1;//转化为数字number
 
-      id = uuid.v1().slice(-12, -1);
+
       resolve(id);
     });
 
@@ -605,6 +623,8 @@ router.post('/article/add', (req, res) => {
   })
 });
 
+
+
 //接收图片接口
 router.post('/article/add/images', function (req, res) {
   // don't forget to delete all req.files when done 
@@ -645,14 +665,13 @@ router.post('/article/add/images', function (req, res) {
     }
   });
 });
-// connection.end();
+
 
 
 //查找指定id文章接口
 router.get('/article/getArticleById', function (req, res) {
   const query = req.query;
-  let id = query.id;
-  console.log(query.id)
+
   new Promise((resolve, reject) => {
     connection.query(searchArticleById, [query.id], function (err, result) {
       if (err) {
@@ -686,7 +705,7 @@ router.get('/article/getArticleById', function (req, res) {
 
   }).catch(err => {
     res.status(500).send({
-      status: 0, // 0 表示处理成功。 1 表示处理失败
+      status: 1, // 0 表示处理成功。 1 表示处理失败
       msg: 'GET 请求成功！', // 状态的描述
       data: err, // 需要响应给客户端的数据
     });
@@ -698,7 +717,33 @@ router.get('/article/getArticleById', function (req, res) {
 
 
 })
+//根据id删除文章
+router.get('/article/articleDeleteById', (req, res) => {
+  let id = req.query.id;
+  console.log(id)
+  new Promise((resolve, reject) => {
+    connection.query(deleteArticleSql, id, function (err, result) {
+      if (err) {
+        console.log('[SELECT ERROR]:', err.message);
+        reject('[SELECT ERROR]:', err.message);
+      }
+      resolve(result);
+    })
+  }).then((result) => {
+    res.send({
+      status: 0, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求成功！', // 状态的描述
+      data: result, // 需要响应给客户端的数据
+    });
+  }).catch((err) => {
+    res.status(500).send({
+      status: 1, // 0 表示处理成功。 1 表示处理失败
+      msg: 'GET 请求失败！', // 状态的描述
+      data: err, // 需要响应给客户端的数据
 
+    })
+  })
+})
 //获得所有分类列表名
 router.get('/article/getCategoryList', (req, res) => {
   new Promise((resolve, reject) => {
@@ -736,33 +781,7 @@ router.get('/article/getCategoryList', (req, res) => {
 });
 
 
-//根据id删除文章
-router.get('/article/articleDeleteById', (req, res) => {
-  let id = req.query.id;
-  console.log(id)
-  new Promise((resolve, reject) => {
-    connection.query(deleteArticleSql, id, function (err, result) {
-      if (err) {
-        console.log('[SELECT ERROR]:', err.message);
-        reject('[SELECT ERROR]:', err.message);
-      }
-      resolve(result);
-    })
-  }).then((result) => {
-    res.send({
-      status: 0, // 0 表示处理成功。 1 表示处理失败
-      msg: 'GET 请求成功！', // 状态的描述
-      data: result, // 需要响应给客户端的数据
-    });
-  }).catch((err) => {
-    res.status(500).send({
-      status: 1, // 0 表示处理成功。 1 表示处理失败
-      msg: 'GET 请求失败！', // 状态的描述
-      data: err, // 需要响应给客户端的数据
 
-    })
-  })
-})
 
 
 

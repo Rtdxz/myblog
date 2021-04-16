@@ -8,7 +8,7 @@
 
 <script>
 import PersonalCard from "./PersonalCard";
-import { request } from "@/network/request";
+
 export default {
   name: "Sidebar",
   components: {
@@ -20,14 +20,7 @@ export default {
   },
   mounted() {},
   methods: {
-    getUserInfo() {
-      request({
-        url: "/api/article/count",
-        methods: "get",
-      }).then((res) => {
-        console.log(res);
-      });
-    },
+    getUserInfo() {},
   },
 };
 </script>

@@ -1,5 +1,5 @@
 const mysql = require("mysql");
-var dbConfig = require('./db.config');
+var { sqlconnect: dbConfig, poolsqlconnect: poolConfig } = require('./db.config');
 
 function handleError(err) {
   if (err) {
@@ -11,6 +11,10 @@ function handleError(err) {
     }
   }
 }
+
+const pool = mysql.createPool(
+  poolConfig)
+
 
 const con = mysql.createConnection(dbConfig);
 con.connect(handleError);
@@ -26,5 +30,5 @@ let connection = sql => {
   });
 };
 // con.end()
-module.exports = { con }
+module.exports = { con, pool }
 

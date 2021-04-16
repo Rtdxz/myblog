@@ -26,8 +26,7 @@
 import Header from "@/components/content/Header";
 import Footer from "@/components/content/Footer";
 
-import { request } from "@/network/request";
-
+import { getArticlesByTimeLine } from "@/network/network";
 export default {
   name: "Archive",
   components: { Header, Footer },
@@ -38,10 +37,7 @@ export default {
     };
   },
   created() {
-    request({
-      url: "/api/article/getArticlesByTimeLine",
-      methods: "get",
-    }).then((res) => {
+    getArticlesByTimeLine().then((res) => {
       console.log(res);
       this.total = res.data.data;
     });

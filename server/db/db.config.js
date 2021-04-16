@@ -5,4 +5,12 @@ const sqlconnect = {
   password: '123456',
   database: 'blog',
 }
-module.exports = sqlconnect;
+const poolsqlconnect = {
+  host: 'localhost',
+  user: 'root',
+  password: '123456',
+  database: 'blog',
+  multipleStatements: true,
+  insecureAuth: true
+}
+module.exports = { sqlconnect, poolsqlconnect };

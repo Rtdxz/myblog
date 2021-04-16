@@ -17,6 +17,9 @@ var vertoken = require('./token/token')//引入token
 var expressJwt = require('express-jwt')
 
 
+var articlerouter = require('./routes/article')
+var loginrouter = require('./routes/login')
+var messagerouter = require('./routes/message')
 
 //验证token
 
@@ -28,13 +31,13 @@ app.use(cors());
 
 
 //解析token获取用户信息
-router.use(function (req, res, next) {
+app.use(function (req, res, next) {
   var token = req.headers['authorization'];
   if (token == undefined) {
     console.log(token)
     return next();
   } else {
-    console.log('这个token被允许了')
+
     vertoken.getToken(token).then((data) => {
       req.data = data;
       return next();
@@ -45,17 +48,19 @@ router.use(function (req, res, next) {
 });
 
 //验证token是否过期并规定那些路由不需要验证
-router.use(expressJwt({
+app.use(expressJwt({
   secret: 'jwt',
   algorithms: ['HS256']
 }).unless({
-  path: ['/login', '/register']  //不需要验证的接口名称
+  path: ['/api/login', '/register',]  //不需要验证的接口名称
 }))
 
 //token失效返回信息
-router.use(function (err, req, res, next) {
+app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
     // 这个需要根据⾃自⼰己的业务逻辑来处理理
+    console.log(err)
+    console.log(req.headers['authorization'])
     res.status(401).send({ code: -1, msg: 'token验证失败' });
   } else {
     // set locals, only providing error in development
@@ -69,29 +74,21 @@ router.use(function (err, req, res, next) {
 });
 
 
-
-
-
-
-
-
-
-
-
 //匹配任意路由，都返回下面这句：first test success
 app.get('/', function (req, res) {
   res.send('first test success!');
 });
 
 //接着配置server
-var server = app.listen(port, function () {
+app.listen(port, function () {
   console.log(`绑定到了端口${port}`)
   console.log(`http://localhost:${port}`)
 });
 
-
-app.use('/api', router);//使用路由
-
+//app.use('/api', router);//使用路由
+app.use('/api', articlerouter)
+app.use('/api', loginrouter)
+app.use('/api', messagerouter)
 
 
 

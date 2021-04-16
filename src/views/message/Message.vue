@@ -43,7 +43,7 @@ import Footer from "@/components/content/Footer";
 
 import MessageItem from "@/components/content/MessageItem";
 
-import { request } from "@/network/request";
+import { getAllMessage, addMessage } from "@/network/network";
 export default {
   name: "Message",
   components: {
@@ -69,10 +69,7 @@ export default {
   methods: {
     getDiscussions() {
       let _this = this;
-      request({
-        methods: "get",
-        url: "/api/discussion/allmessage",
-      }).then((res) => {
+      getAllMessage().then((res) => {
         _this.discussions = res.data.data;
       });
     },
@@ -81,11 +78,7 @@ export default {
       let date = this.timeFormatter();
       _this.form.date = date; //设置发布时间
       console.log(_this.form.date);
-      request({
-        method: "post",
-        url: "/api/discussion/addMessage",
-        data: _this.form,
-      }).then((res) => {
+      addMessage(this.form).then((res) => {
         console.log(res);
         _this.flag = true;
         setTimeout(() => {

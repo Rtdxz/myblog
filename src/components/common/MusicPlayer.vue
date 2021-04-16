@@ -23,26 +23,19 @@ export default {
   },
   created() {
     let _this = this;
-    this.$axios
-      .get("/api/api/playlist/detail?id=690960343", {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36",
-        },
-      })
-      .then((res) => {
-        res.data.result.tracks.forEach((ele) => {
-          this.$axios
-            .get("https://api.imjad.cn/cloudmusic/?id=" + ele.id)
-            .then((res) => {
-              console.log(res.data.data[0].url);
-              _this.audio.push({
-                name: res.data.data[0].id,
-                src: res.data.data[0].url,
-              });
+    this.$axios.get("/api/api/playlist/detail?id=690960343").then((res) => {
+      res.data.result.tracks.forEach((ele) => {
+        this.$axios
+          .get("https://api.imjad.cn/cloudmusic/?id=" + ele.id)
+          .then((res) => {
+            console.log(res.data.data[0].url);
+            _this.audio.push({
+              name: res.data.data[0].id,
+              src: res.data.data[0].url,
             });
-        });
+          });
       });
+    });
     console.log(this.audio);
   },
   mounted() {},

@@ -42,7 +42,7 @@ import SideBar from "@/components/content/Sidebar";
 import ToBottomButton from "@/components/common/toBottomButton";
 import MusicPlayer from "@/components/common/MusicPlayer";
 
-import { request } from "@/network/request";
+import { getArticlesByPage, getArticleCount } from "@/network/network";
 export default {
   name: "Home",
   components: {
@@ -65,29 +65,21 @@ export default {
     };
   },
   created() {
-    let _this = this;
-    request({
-      method: "get",
-      url: "/api/article/getArticlesByPage",
-      params: {
-        page: _this.page,
-      },
-    }).then((res) => {
+    getArticlesByPage({ page: this.page }).then((res) => {
       this.articles = res.data.data;
       console.log(res.data);
     });
 
-    request({
-      method: "get",
-      url: "/api/article/getArticleCount",
-    }).then((res) => {
+    getArticleCount().then((res) => {
       //this.articles = res.data.data;
       let num = parseInt(JSON.stringify(res.data.data[0]).match(/(\d+)/g));
-      _this.page_count = num;
+      this.page_count = num;
     });
   },
   mounted() {
-    if (!this.imgLoad("@/assets/img/93b3330befbe923b8ae1e154fd14fab8.jpg")) {
+    if (
+      !this.imgLoad("../../assets/img/93b3330befbe923b8ae1e154fd14fab8.jpg")
+    ) {
       this.loading = false;
     }
   },
@@ -108,7 +100,7 @@ export default {
     loadMore: function () {
       this.isloading = true;
       this.page += 1;
-      this.getArticle({
+      getArticlesByPage({
         page: this.page, //请求页数
       })
         .then((res) => {
@@ -119,15 +111,6 @@ export default {
         .catch((err) => {
           this.$toast.fail("系统开小差,请重试");
         });
-    },
-    getArticle(params) {
-      return request({
-        method: "get",
-        url: "/api/article/getArticlesByPage",
-        params: params,
-      }) /* then((res) => {
-        this.articles = res.data.data;
-      }) */;
     },
   },
 };

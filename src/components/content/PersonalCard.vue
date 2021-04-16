@@ -41,8 +41,8 @@
 
 <script>
 import Tag from "@/components/common/Tag";
-import { request } from "@/network/request";
 
+import { getCategoryList, getAllTags } from "@/network/network";
 export default {
   name: "Personalcard",
   components: {
@@ -75,19 +75,13 @@ export default {
       this.$router.push("/tag/" + target);
     },
     getCategoryList() {
-      request({
-        url: "/api/article/getCategoryList",
-        methods: "get",
-      }).then((res) => {
+      getCategoryList().then((res) => {
         this.categoryList = res.data.data;
         console.log(this.categoryList);
       });
     },
     getAllTags() {
-      request({
-        url: "/api/article/getAllTags",
-        methods: "get",
-      }).then((res) => {
+      getAllTags().then((res) => {
         console.log(res);
         this.alltags = res.data.data;
       });

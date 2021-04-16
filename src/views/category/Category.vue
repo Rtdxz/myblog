@@ -28,7 +28,7 @@ import Footer from "@/components/content/Footer";
 import ArticleList from "@/components/content/ArticleList";
 import SideBar from "@/components/content/Sidebar";
 
-import { request } from "@/network/request";
+import { getArticlesByType, getArticleCountByType } from "@/network/network";
 export default {
   name: "Category",
   components: {
@@ -60,12 +60,9 @@ export default {
   mounted() {},
   methods: {
     loadData() {
-      request({
-        method: "get",
-        url: "/api/article/getArticleCountByCategory",
-        params: {
-          category: this.$route.params.category,
-        },
+      getArticleCountByType({
+        category: this.$route.params.category,
+        type: "category",
       }).then((res) => {
         //this.articles = res.data.data;
         let num = parseInt(JSON.stringify(res.data.data[0]).match(/(\d+)/g));
@@ -75,13 +72,10 @@ export default {
       this.page += 1;
       this.title = this.$route.params.category;
       console.log(this.$route.params.category);
-      request({
-        method: "get",
-        url: "/api/article/getArticleByCategory",
-        params: {
-          category: _this.$route.params.category,
-          page: _this.page,
-        },
+      getArticlesByType({
+        type: "category",
+        category: _this.$route.params.category,
+        page: _this.page,
       }).then((res) => {
         console.log(res);
         this.articles = this.articles.concat(res.data.data);
