@@ -1,24 +1,29 @@
 <template>
   <div>
-    <Header></Header>
-
     <div class="container">
-      <h1>标签页</h1>
+      <h1>{{ title }}</h1>
       <div>
         <el-row :gutter="30">
-          <el-col :sm="24" :md="16"
+          <el-col :sm="24" :md="17"
             ><article-list :articles="articles"></article-list>
-            <el-button v-if="page * 10 < page_count" @click="loadData"
+            <div class="nomore" v-if="isloading">
+              <i class="el-icon-loading"></i>
+            </div>
+            <el-button v-else-if="page * 10 < page_count" @click="loadData"
               >点击加载更多</el-button
             >
-            <div class="nomore" v-else>没有更多了...</div>
+            <div
+              class="nomore"
+              v-else-if="page_count > 10 && page * 10 > page_count"
+            >
+              没有更多了...
+            </div>
           </el-col>
 
-          <el-col :sm="24" :md="8"><side-bar></side-bar></el-col>
+          <el-col :sm="24" :md="7"><side-bar></side-bar></el-col>
         </el-row>
       </div>
     </div>
-    <Footer></Footer>
   </div>
 </template>
 
@@ -44,6 +49,7 @@ export default {
       page: 0,
       page_count: 10,
       title: "",
+      isloading: true,
     };
   },
   created() {
@@ -53,18 +59,20 @@ export default {
     next();
     console.log(to);
     console.log(from);
-    this.articles = [];
     this.page = 0;
     this.loadData();
   },
   mounted() {},
   methods: {
     loadData() {
+      this.isloading = true;
+      this.title = this.$route.params.tagname;
       request({
         method: "get",
-        url: "/api/article/getArticleCountByTag",
+        url: "/api/article/getArticleCountByType",
         params: {
           tagname: this.$route.params.tagname,
+          type: "tag",
         },
       }).then((res) => {
         let num;
@@ -83,14 +91,18 @@ export default {
       console.log(this.$route.params.tagname);
       request({
         method: "get",
-        url: "/api/article/getArticleByTag",
+        url: "/api/article/getArticlesByType",
         params: {
           tagname: _this.$route.params.tagname,
           page: _this.page,
+          type: "tag",
         },
       }).then((res) => {
+        this.articles = [];
+
         console.log(res);
         this.articles = this.articles.concat(res.data.data);
+        this.isloading = false;
       });
     },
   },

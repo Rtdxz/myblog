@@ -26,7 +26,7 @@ var searchArticlesByDate = 'SELECT date FROM article GROUP BY date)'
 //查询评论
 var searchMessage = 'SELECT * FROM discussion ORDER BY date DESC'
 //添加评论
-var insertMessageSql = 'INSERT INTO discussion(id,name,message,date) VALUES(?,?,?,?)'
+var insertMessageSql = 'INSERT INTO discussion(id,name,message,email,date) VALUES(?,?,?,?,?)'
 //添加标签
 var insertTagSql = 'INSERT INTO tag(tagname) VALUES(?)'
 //查找所有标签

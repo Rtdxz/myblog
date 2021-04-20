@@ -28,7 +28,6 @@ export default {
         this.$axios
           .get("https://api.imjad.cn/cloudmusic/?id=" + ele.id)
           .then((res) => {
-            console.log(res.data.data[0].url);
             _this.audio.push({
               name: res.data.data[0].id,
               src: res.data.data[0].url,
@@ -36,7 +35,6 @@ export default {
           });
       });
     });
-    console.log(this.audio);
   },
   mounted() {},
   methods: {},

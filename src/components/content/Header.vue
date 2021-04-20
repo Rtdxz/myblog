@@ -1,11 +1,12 @@
 <template>
   <div class="header">
     <div class="header-nav">
+      <div class="logo"></div>
       <el-menu
-        class="el-menu-demo"
+        class="el-menu"
         mode="horizontal"
         @select="handleSelect"
-        background-color="#545c64"
+        background-color="#000"
         text-color="#fff"
         active-text-color="#ffd04b"
         :default-active="$route.path"
@@ -140,13 +141,35 @@ export default {
 <style scoped>
 .header {
   /* margin-bottom: 60px; */
+  position: relative;
+  width: 100%;
+  height: 1px;
 }
 .header-nav {
-  /* position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
-  right: 0; */
+  right: 0;
+
+  /* opacity: 0.6; */
   z-index: 100;
+  box-shadow: 2px 0 4px 4px rgba(100, 100, 100, 0.1);
+}
+.logo {
+  position: absolute;
+  left: 50%;
+  top: 15px;
+  transform: translate(-50%);
+  color: #fff;
+  z-index: 99999;
+  background-image: url("../../assets/img/logo2.png");
+  visibility: hidden;
+  /* background: no-repeat fixed top; */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 150px;
+  height: 30px;
 }
 
 .user-info {
@@ -160,11 +183,18 @@ export default {
   right: 0;
   top: 0;
 }
-.el-menu {
+.el-menu.el-menu--horizontal {
+  border-bottom: none;
+}
+.el-menu--horizontal {
+  opacity: 0.6 !important;
   min-height: 60px;
   border-bottom: none; /* 去除默认下边框 */
 }
-/deep/ .el-icon-arrow-down {
+.el-menu--horizontal .el-menu {
+  opacity: 0.6 !important;
+}
+.el-menu /deep/ .el-icon-arrow-down {
   /* content: "1" !important; */
   display: none !important;
 }
@@ -172,6 +202,39 @@ export default {
 @media screen and (max-width: 996px) {
   .el-menu {
     border-bottom: none; /* 去除默认下边框 */
+  }
+}
+@media screen and (max-width: 800px) {
+  .el-menu--horizontal {
+    opacity: 1 !important;
+    min-height: 60px;
+    border-bottom: none; /* 去除默认下边框 */
+  }
+
+  .header {
+    /* margin-bottom: 60px; */
+    position: relative;
+    width: 100%;
+    height: 60px;
+  }
+  .login-info {
+    visibility: hidden;
+  }
+  .logo {
+    position: absolute;
+    left: 50%;
+    top: 15px;
+    transform: translate(-50%);
+    color: #fff;
+    z-index: 99999;
+    background-image: url("../../assets/img/logo2.png");
+    visibility: visible;
+    /* background: no-repeat fixed top; */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 150px;
+    height: 30px;
   }
 }
 </style>

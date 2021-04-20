@@ -1,6 +1,5 @@
 <template>
   <div>
-    <Header></Header>
     <div class="container">
       <div class="title">
         <h1>关于页面</h1>
@@ -11,12 +10,10 @@
         <p>
           ●广工大三计算机学生一枚<br />
           目前瞎折腾中<br />
-          不知道会发生什么<br />
           目前很多功能尚未完善<br />
         </p>
       </div>
     </div>
-    <Footer></Footer>
   </div>
 </template>
 

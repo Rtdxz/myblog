@@ -1,21 +1,26 @@
 <template>
   <div>
-    <Header></Header>
     <div class="container">
       <h1>留言区</h1>
       <div class="box">
         <div>
-          <el-form ref="form" :model="form">
-            <el-form-item label="昵称"
+          <el-form ref="form" :model="form" :rules="rules">
+            <el-form-item label="昵称" prop="name"
               ><el-input v-model="form.name"></el-input
             ></el-form-item>
-            <el-input
-              type="textarea"
-              :rows="10"
-              placeholder="随便写点什么吧"
-              v-model="form.message"
-            >
-            </el-input>
+            <el-form-item label="邮箱" prop="email"
+              ><el-input v-model="form.email"></el-input
+            ></el-form-item>
+            <el-form-item label="留言" prop="message">
+              <el-input
+                type="textarea"
+                :rows="10"
+                placeholder="随便写点什么吧"
+                v-model="form.message"
+              >
+              </el-input
+            ></el-form-item>
+
             <el-button type="primary" @click="submit()" :disabled="flag"
               >发表</el-button
             ></el-form
@@ -33,7 +38,6 @@
         </el-row>
       </div>
     </div>
-    <Footer></Footer>
   </div>
 </template>
 
@@ -53,13 +57,47 @@ export default {
   },
   directives: {},
   data() {
+    var checkEmail = (rule, value, callback) => {
+      const mailReg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+      if (!value) {
+        return callback(new Error("邮箱不能为空"));
+      }
+      setTimeout(() => {
+        if (mailReg.test(value)) {
+          callback();
+        } else {
+          callback(new Error("请输入正确的邮箱格式"));
+        }
+      }, 100);
+    };
     return {
       flag: false,
       form: {
         name: "",
+        email: "",
         message: "",
       },
       discussions: [],
+      rules: {
+        name: [
+          { required: true, message: "请输入昵称", trigger: "blur" },
+          { min: 3, max: 10, message: "长度在 3 到10 个字符", trigger: "blur" },
+        ],
+        email: [
+          { required: true, message: "邮箱不能为空", trigger: "blur" },
+          { validator: checkEmail, trigger: "blur" },
+          { max: 32, message: "邮箱长度需要小于32 个字符", trigger: "blur" },
+        ],
+        message: [
+          { required: true, message: "请输入内容", trigger: "blur" },
+          {
+            min: 3,
+            max: 60,
+            message: "长度在10到60个字之间",
+            trigger: "blur",
+          },
+        ],
+      },
     };
   },
   created() {
@@ -74,17 +112,27 @@ export default {
       });
     },
     submit() {
-      let _this = this;
-      let date = this.timeFormatter();
-      _this.form.date = date; //设置发布时间
-      console.log(_this.form.date);
-      addMessage(this.form).then((res) => {
-        console.log(res);
-        _this.flag = true;
-        setTimeout(() => {
-          _this.flag = false;
-        }, 40000);
-        _this.getDiscussions();
+      this.$refs["form"].validate((valid) => {
+        if (valid) {
+          console.log("submit!");
+          let _this = this;
+          let date = this.timeFormatter();
+          _this.form.date = date; //设置发布时间
+          console.log(_this.form.date);
+          this.form.message = this.form.message.replace(/\</g, " ");
+          this.form.message = this.form.message.replace(/\>/g, " ");
+          addMessage(this.form).then((res) => {
+            console.log(res);
+            _this.flag = true;
+            setTimeout(() => {
+              _this.flag = false;
+            }, 4000);
+            _this.getDiscussions();
+          });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
       });
     },
 
@@ -140,7 +188,7 @@ export default {
 }
 .box {
   padding: 40px;
-
+  background-color: #fff;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
 }
 </style>

@@ -31,15 +31,23 @@ Vue.prototype.$axios = axios
 
 
 
+import VueLazyload from 'vue-lazyload'
+
+Vue.use(VueLazyload, {
+  loading: require('./assets/img/loading.gif'),//加载中图片，一定要有，不然会一直重复加载占位图
+  error: require('./assets/img/error.jpeg')  //加载失败图片
+});
+
+
 router.afterEach((to, from, next) => {
+  setTimeout(() => {
+    document.body.scrollTop = 0;
 
-  window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+  }, 0);
 
-  // 或
 
-  // window.scroll(0, 0);
-
-});//页面跳转时跳到顶部
+});
 
 
 new Vue({
@@ -48,4 +56,4 @@ new Vue({
 
 }).$mount('#app')
 
-import { request } from "@/network/request";
+

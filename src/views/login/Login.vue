@@ -1,36 +1,38 @@
 <template>
   <div>
-    <el-form
-      ref="form"
-      :model="form"
-      label-width="100px"
-      class="login-box"
-      :rules="rules"
-    >
-      <h3 class="login-title">用户登陆</h3>
-      <el-form-item label="用户名" prop="username">
-        <el-input
-          v-model="form.username"
-          size="medium"
-          style="width: 200px"
-          clearable
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="密码" prop="password">
-        <el-input
-          v-model="form.password"
-          size="medium"
-          style="width: 200px"
-          prop="password"
-          show-password
-        ></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit" class="login-button"
-          >登录</el-button
-        ></el-form-item
+    <div class="container">
+      <el-form
+        ref="form"
+        :model="form"
+        label-width="100px"
+        class="login-box"
+        :rules="rules"
       >
-    </el-form>
+        <h3 class="login-title">用户登陆</h3>
+        <el-form-item label="用户名" prop="username">
+          <el-input
+            v-model="form.username"
+            size="medium"
+            style="width: 200px"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input
+            v-model="form.password"
+            size="medium"
+            style="width: 200px"
+            prop="password"
+            show-password
+          ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit" class="login-button"
+            >登录</el-button
+          ></el-form-item
+        >
+      </el-form>
+    </div>
   </div>
 </template>
 
@@ -101,6 +103,7 @@ export default {
   width: 350px;
   padding: 35px 35px 15px 35px;
   box-shadow: 0 0 20px rgba(100, 100, 100, 0.3);
+  background-color: #fff;
 }
 .login-title {
   text-align: center;

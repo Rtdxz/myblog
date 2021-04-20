@@ -37,6 +37,7 @@ export default {
         children: "children",
         label: "label",
       },
+      flag: true,
     };
   },
 
@@ -52,38 +53,86 @@ export default {
       let anchorH = document.getElementById(elemId).offsetTop - 70;
 
       if (document.documentElement.scrollTop) {
-        document.documentElement.scrollTop = anchorH;
-        //this.anmita("document", anchorH);
+        // document.documentElement.scrollTop = anchorH;
+        this.anmita("document", anchorH);
       } else if (document.body.scrollTop) {
-        document.body.scrollTop = anchorH;
-        //this.anmita("body", anchorH);
+        // document.body.scrollTop = anchorH;
+        this.anmita("body", anchorH);
       } else {
         //二者均为0状态，有一者恒为0，另一者可能因为回到顶部等操作被置为0，便会出现这种状况
-        document.documentElement.scrollTop = anchorH;
-        document.body.scrollTop = anchorH;
+        this.anmita("body", anchorH);
       }
 
       //window.scrollTo(0,anchorH)  //若以上scrollTop方式不生效，可使用此scrollTo方式，但注意scrollTo在安卓手机上存在兼容性问题
     },
     anmita(classify, anchorH) {
-      if (classify == "body") {
-        let y = Math.floor(document.body.scrollTop - anchorH);
-        let timer = setInterval(function () {
-          document.body.scrollTop += y;
-          if (y <= 1) {
-            document.body.scrollTop = anchorH;
-            clearInterval(timer);
-          }
-        }, 100);
-      } else if (classify == "document") {
+      console.log(anchorH, document.documentElement.scrollTop);
+      let _this = this;
+      if (!_this.flag) return;
+      _this.flag = false;
+      if (classify == "document") {
         let y = Math.floor(document.documentElement.scrollTop - anchorH);
-        let timer = setInterval(function () {
-          document.documentElement.scrollTop += y;
-          if (y <= 1) {
-            document.documentElement.scrollTop = anchorH;
-            clearInterval(timer);
-          }
-        }, 0);
+        if (y > 0) {
+          let timer = setInterval(function () {
+            document.documentElement.scrollTop -= Math.floor(
+              (document.documentElement.scrollTop - anchorH) / 10
+            );
+            console.log(document.documentElement.scrollTop - anchorH);
+            if (document.documentElement.scrollTop - anchorH < 10) {
+              clearInterval(timer);
+              _this.flag = true;
+            }
+          }, 10);
+        } else {
+          let timer = setInterval(function () {
+            document.documentElement.scrollTop += Math.floor(
+              (anchorH - document.documentElement.scrollTop) / 10
+            );
+            console.log(anchorH - document.documentElement.scrollTop);
+            console.log(anchorH, document.documentElement.scrollTop);
+
+            console.log(document.documentElement.clientHeight);
+            if (
+              anchorH - document.documentElement.scrollTop < 10 ||
+              anchorH - document.documentElement.scrollTop <
+                document.documentElement.clientHeight / 2
+            ) {
+              clearInterval(timer);
+              _this.flag = true;
+            }
+          }, 10);
+        }
+      } else {
+        let y = Math.floor(document.body.scrollTop - anchorH);
+        if (y > 0) {
+          let timer = setInterval(function () {
+            document.body.scrollTop -= Math.floor(
+              (document.body.scrollTop - anchorH) / 10
+            );
+            console.log(document.body.scrollTop - anchorH);
+            if (document.body.scrollTop - anchorH < 10) {
+              clearInterval(timer);
+              _this.flag = true;
+            }
+          }, 10);
+        } else {
+          let timer = setInterval(function () {
+            document.body.scrollTop += Math.floor(
+              (anchorH - document.body.scrollTop) / 10
+            );
+            console.log(anchorH - document.body.scrollTop);
+            console.log(anchorH, document.body.scrollTop);
+
+            console.log(document.body.clientHeight);
+            if (
+              anchorH - document.body.scrollTop < 10 ||
+              anchorH - document.body.scrollTop < document.body.clientHeight / 2
+            ) {
+              clearInterval(timer);
+              _this.flag = true;
+            }
+          }, 10);
+        }
       }
     },
   },
@@ -91,10 +140,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@media screen and(max-width:780px) {
+  .nav {
+    opacity: 0;
+  }
+}
 .nav {
   position: fixed;
   bottom: 200px;
-  left: 20px;
+  right: 20px;
+  transition: 0.3s linear;
 }
 .nav-item {
   cursor: pointer;

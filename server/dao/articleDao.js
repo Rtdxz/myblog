@@ -10,6 +10,43 @@ const marked = require('marked');//将markdown语法转成html
 var resSend = function (res) {
 
 }
+
+//查询所有文章
+var getAllArticles = function (req, res) {
+  pool.getConnection(function (err, connection) {
+    if (err) console.log(err)
+    new Promise((resolve, reject) => {
+      connection.query(sqls.searchAllArticlesSql, function (err, result) {
+        if (err) {
+          console.log('[SELECT ERROR]:', err.message);
+          reject(err)
+        }
+        //数据库查询结果返回到result中
+        resolve(result)
+      })
+    }).then((result) => {
+
+      result.forEach((ele, index) => {
+        //ele.date = ele.date.toLocaleString();//将所有时间装化为标准时间
+        ele.date = ele.date.toLocaleString();//标准时间的年月日，没有具体时间
+      })
+      // 调用 res.send() 方法，向客户端响应处理的结果
+      res.send({
+        status: 0, // 0 表示处理成功。 1 表示处理失败
+        msg: 'GET 请求成功！', // 状态的描述
+        data: result, // 需要响应给客户端的数据
+      });
+    }).catch(err => {
+      console.log(err)
+      res.status(500).send({
+        status: 1, // 0 表示处理成功。 1 表示处理失败
+        msg: 'GET 请求失败！', // 状态的描述
+        data: err, // 需要响应给客户端的数据
+      });
+    })
+    connection.release()
+  })
+}
 //归档查询文章
 var getArticlesByTimeLine = function (req, res) {
   pool.getConnection(function (err, connection) {
@@ -121,6 +158,7 @@ var getArticlesByPage = function (req, res) {
     connection.release();
   })
 }
+
 //添加文章
 var insertArticle = function (req, res) {
   //用上对象池
@@ -148,12 +186,12 @@ var insertArticle = function (req, res) {
         sum = JSON.stringify(result).replace(/[^0-9]/ig, "");
         let id = sum * 1 + 1;//转化为数字number
 
-        id = uuid.v1().slice(-12, -1);
+        id = uuid.v1();
         resolve(id);
       });
 
     }).then((id) => {
-      let filepath = '../public/md/' + id + '.md';
+      let filepath = './public/md/' + id + '.md';
       console.log(filepath)
       fs.writeFile(filepath, mdcontent, function (err) {
         if (!err) {
@@ -176,7 +214,7 @@ var insertArticle = function (req, res) {
         }
 
         tags.forEach((tagname) => {
-          connection.query(insertTagRelateSql, [id, tagname], function (err, result) {
+          connection.query(sqls.insertTagRelateSql, [id, tagname], function (err, result) {
             if (err) {
               console.log('[INSERT ERROR] - ', err.message);
               throw err;
@@ -208,6 +246,7 @@ var insertArticle = function (req, res) {
   })
 
 }
+//查询文章数量
 var getArticleCount = function (req, res) {
   pool.getConnection(function (err, connection) {
     if (err) console.log(err)
@@ -292,12 +331,17 @@ var getArticlesByType = function (req, res) {
   if (type == 'tag') {
     const tag = req.query.tagname
     param = tag;
-    sql = sqls.searchArticlesBytagSql;
+    sql = sqls.searchArticlesByTagSql;
   }
   else if (type == 'category') {
     const category = req.query.category;
     param = category;
     sql = sqls.searchArticlesByClassifySql;
+  }
+  else if (type == 'key') {
+    const key = req.query.key;
+    param = key;
+    sql = sqls.searchArticlesByKeySql;
   }
   else {
     throw new Error('error type')
@@ -312,6 +356,7 @@ var getArticlesByType = function (req, res) {
       let end = start + pageSize;
       connection.query(sql, [param, start, end], function (err, result) {
         if (err) {
+          console.log('ssssssssss')
           console.log('[SELECT ERROR]:', err.message);
           reject(err)
         }
@@ -373,7 +418,7 @@ var addImage = function (req, res) {
       console.log('parse files: ' + filesTmp);
       var image = files.image[0];//获取图片对象
       var uploadedPath = image.path;//获取图片路径
-      var dstPath = '.././public/img/' + image.originalFilename;//获取原始名字
+      var dstPath = './public/img/' + image.originalFilename;//获取原始名字
       //重命名为真实文件名
       fs.rename(uploadedPath, dstPath, function (err) {
         if (err) {
@@ -411,12 +456,19 @@ var getArticleById = function (req, res) {
       fs.readFile(article.content, function (err, data) {
         if (err) {
           console.log(err);
-          Promise.reject(err);
+          return res.status(500).send({
+            status: 1, // 0 表示处理成功。 1 表示处理失败
+            msg: 'GET 请求失败！', // 状态的描述
+            data: err, // 需要响应给客户端的数据
+          });
+
+
         } else {
           console.log(data.toString());
           console.log(data.length + ' bytes');
 
           let html = marked(data.toString());
+
           article.content = html;
           res.send({
             status: 0, // 0 表示处理成功。 1 表示处理失败
@@ -427,9 +479,10 @@ var getArticleById = function (req, res) {
       });
 
     }).catch(err => {
+
       res.status(500).send({
         status: 1, // 0 表示处理成功。 1 表示处理失败
-        msg: 'GET 请求成功！', // 状态的描述
+        msg: 'GET 请求失败！', // 状态的描述
         data: err, // 需要响应给客户端的数据
       });
     });
@@ -580,6 +633,7 @@ var addTag = function (req, res) {
 
 
 module.exports = {
+  getAllArticles,
   insertArticle,
   getArticlesByPage,
   getArticlesByTimeLine,

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <Header></Header>
     <div class="container">
       <div class="year-box" v-for="year in total" :key="year.title">
         <h1>{{ year.title }}</h1>
@@ -18,7 +17,6 @@
         </div>
       </div>
     </div>
-    <Footer></Footer>
   </div>
 </template>
 
@@ -70,13 +68,14 @@ a {
   position: relative;
   height: 40px;
   border-bottom: 1px solid #eee;
+  background-color: #fff;
 }
 .article:hover {
   background-color: #ddd;
 }
 .article-list {
   width: 100%;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  // border-radius: 30px;
 }
 </style>

@@ -5,14 +5,42 @@
         <img src="~@/assets/img/profile-picture2.jpg" alt="图片显示错误" />
       </div>
       <div class="name">Crt</div>
-      <div class="info">
+      <div class="motto">努力学习中</div>
+      <!-- <div class="info">
         <div class="info-articleCount">
-          <span>{{ articleCount }}</span> <span>文章数</span>
+          <span>{{ articleCount }}</span>
+          <span>文章数</span>
         </div>
         <div class="info-visitorVolume">
           <span>{{ visitorVolume }}</span
           ><span>访问量</span>
         </div>
+      </div> -->
+      <div class="info">
+        <a
+          class="icon iconfont qq"
+          :href="require('@/assets/img/qq.png')"
+          target="_Blank"
+          >&#xe646; </a
+        ><a
+          class="icon iconfont wechat"
+          :href="require('@/assets/img/wechat.jpg')"
+          target="_Blank"
+          >&#xe647;
+        </a>
+        <a
+          class="icon iconfont email"
+          href="mailto:1712045716@qq.com?subject=邮件标题&body=邮件内容"
+          title="1712045716@qq.com"
+          >&#xe649;
+        </a>
+        <a
+          class="icon iconfont zhihu"
+          href="https://500px.com.cn/community/user-details/287dc82ff428fbfd252246600f2538595"
+          target="_Blank"
+          title="500px中国"
+          >&#xe693;
+        </a>
       </div>
     </div>
     <div class="center">
@@ -34,6 +62,14 @@
       <div class="content-head">标签</div>
       <div>
         <Tag :UnderTheFlagType="alltags" @clickTag="moveToOtherPage"></Tag>
+      </div>
+    </div>
+    <div class="search">
+      <div class="content-head">搜索</div>
+      <div>
+        <el-input>
+          <el-button slot="append" icon="el-icon-search"></el-button
+        ></el-input>
       </div>
     </div>
   </div>
@@ -93,10 +129,12 @@ export default {
 <style lang="scss" scoped>
 .box {
   width: 100%;
+  background-color: #fff;
+  overflow: hidden;
 }
 .top {
   text-align: center;
-  margin: 10px 40px 0;
+  margin: 0 40px 0;
   border-bottom: 2px solid rgb(220, 223, 230);
   padding: 30px;
 }
@@ -119,6 +157,30 @@ export default {
 }
 .name {
   font-size: 30px;
+  margin-bottom: 10px;
+}
+.info {
+  a {
+    flex: 1;
+    cursor: pointer;
+    font-size: 3vw;
+    text-decoration: none;
+  }
+  .qq {
+    color: rgb(104, 165, 225);
+  }
+  .wechat {
+    color: rgb(141, 200, 27);
+  }
+  .email {
+    color: rgb(112, 138, 151);
+  }
+  .zhihu {
+    color: rgb(221, 4, 30);
+
+    font-size: 2.5vw;
+    margin-top: 0.3vw;
+  }
 }
 .info div {
   display: flex;
@@ -133,13 +195,16 @@ export default {
   font-size: 30px;
   font-weight: 700;
 }
-.center {
+.center,
+.bottom,
+.search {
   margin: 30px 40px 0;
+}
+.center,
+.bottom {
   border-bottom: 2px solid rgb(220, 223, 230);
 }
-.bottom {
-  margin: 30px 40px 0;
-}
+
 .content-head {
   margin-bottom: 20px;
 }
@@ -167,5 +232,10 @@ export default {
       background-color: #eee;
     }
   }
+}
+.search {
+  .el-input {
+  }
+  margin-bottom: 30px;
 }
 </style>

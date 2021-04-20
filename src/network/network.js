@@ -1,4 +1,6 @@
 import { request } from './request'
+
+//分页获得文章列表
 export function getArticlesByPage(params) {
   return request({
     method: "get",
@@ -6,12 +8,15 @@ export function getArticlesByPage(params) {
     params: params
   })
 }
+
+//获得文章数量
 export function getArticleCount() {
   return request({
     method: "get",
     url: "/api/article/getArticleCount",
   })
 }
+//通过类型获取文章列表
 export function getArticlesByType(params) {
   return request({
     method: "get",
@@ -69,5 +74,36 @@ export function getCategoryList() {
   return request({
     url: "/api/article/getCategoryList",
     methods: "get",
+  })
+}
+
+export function getAllArticles() {
+  return request({
+    url: "/api/article/getAllTags",
+    methods: "get",
+  })
+}
+export function addTag(data) {
+  return request({
+    url: "/api/article/addTag",
+    method: "post",
+    data: data
+  })
+}
+
+export function addImage(data) {
+  return request({
+    url: "/api/article/addImage",
+    method: "post",
+    data: data,
+    headers: { "Content-Type": "multipart/form-data" },
+  })
+}
+
+export function addArticle(data) {
+  return request({
+    method: "post",
+    url: "/api/article/add",
+    data: data,
   })
 }

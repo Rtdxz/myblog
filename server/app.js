@@ -52,7 +52,19 @@ app.use(expressJwt({
   secret: 'jwt',
   algorithms: ['HS256']
 }).unless({
-  path: ['/api/login', '/register',]  //不需要验证的接口名称
+  path: ['/api/login', '/register',
+    '/api/article/getAllArticles',
+    '/api/article/getArticlesByPage',
+    '/api/article/getArticlesByTimeLine',
+    '/api/article/getArticleCount',
+    '/api/article/getArticleCountByType',
+    '/api/article/getArticlesByType',
+    '/api/article/getArticleById',
+    '/api/article/getCategoryList',
+    '/api/article/getAllTags',
+    '/api/discussion/allmessage',
+    '/api/discussion/addMessage'
+  ]  //不需要验证的接口名称
 }))
 
 //token失效返回信息

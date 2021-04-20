@@ -21,6 +21,7 @@ export default {
   width: 100%;
   height: 100px;
   margin-top: 100px;
-  background-color: rgba(100, 100, 100, 0.7);
+  background-color: #1b1c1d;
+  opacity: 0.6;
 }
 </style>

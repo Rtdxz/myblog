@@ -39,7 +39,7 @@ export default {
 .content {
   margin: 20px 20px 10px;
 
-  padding: 0 30px 0;
+  padding: 0 1vw 0;
   min-height: 40px;
 }
 .content p {

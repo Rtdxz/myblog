@@ -2,9 +2,14 @@ var express = require('express');
 var router = express.Router();
 var articleDao = require('../dao/articleDao')
 
+
 //添加文章
 router.post('/article/add', (req, res) => {
   articleDao.insertArticle(req, res);
+});
+//查询所有文章
+router.get('/article/getAllArticles', (req, res) => {
+  articleDao.getAllArticles(req, res);
 });
 //分页查询
 router.get('/article/getArticlesByPage', (req, res) => {
@@ -14,7 +19,6 @@ router.get('/article/getArticlesByPage', (req, res) => {
 router.get('/article/getArticlesByTimeLine', (req, res) => {
   articleDao.getArticlesByTimeLine(req, res);
 })
-
 //查询全部文章数量
 router.get('/article/getArticleCount', (req, res) => {
   articleDao.getArticleCount(req, res)
@@ -44,13 +48,10 @@ router.get('/article/articleDeleteById', (req, res) => {
 router.get('/article/getCategoryList', (req, res) => {
   articleDao.getCategoryListc(req, res)
 });
-
-
 //查找所有标签
 router.get('/article/getAllTags', (req, res) => {
   articleDao.getAllTags(req, res)
 })
-
 //添加标签
 router.post('/article/addTag', (req, res) => {
   articleDao.addTag(req, res)

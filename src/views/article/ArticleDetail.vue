@@ -1,7 +1,5 @@
 <template>
   <div>
-    <Header></Header>
-
     <div class="container">
       <div class="box" v-loading="loading">
         <div class="article-header">
@@ -16,13 +14,12 @@
             v-html="article.content"
             v-highlight
             ref="markdown"
+            v-lazy-container="{ selector: 'img' }"
           ></div>
         </div>
       </div>
     </div>
     <article-nav :titleArray="titleArray"></article-nav>
-
-    <Footer></Footer>
   </div>
 </template>
 
@@ -35,6 +32,8 @@ import Footer from "@/components/content/Footer";
 import ArticleNav from "@/components/content/ArticleNav";
 
 import "@/assets/js/hljs"; //代码高亮
+
+import utils from "@/utils/utils";
 
 export default {
   name: "ArticleDetail",
@@ -58,14 +57,19 @@ export default {
     getArticleById({
       id: this.$route.params.articleId,
     }).then((res) => {
+      console.log(res);
       let article = res.data.data;
       //console.log(article);
+
       this.article = article;
+      this.article.content = this.article.content.replace(/src/g, "data-src");
       this.getArticleArray();
       this.loading = false;
     });
   },
-  mounted() {},
+  mounted() {
+    utils.lazyload();
+  },
   methods: {
     //生成标题数组
     getArticleArray() {
@@ -93,7 +97,6 @@ export default {
         });
 
         if (this.titleArray.length == 0) {
-          console.log("sssssssssssss");
           this.$refs.markdown
             .getElementsByTagName("h2")
             .forEach((ele, index) => {
@@ -109,12 +112,13 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
 .box {
   padding: 10px;
   padding-top: 20px;
-  min-height: 500px;
+  min-height: 700px;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 }
 .article-header {
   height: 60px;

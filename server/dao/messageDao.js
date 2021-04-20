@@ -47,13 +47,14 @@ var addMessage = function (req, res) {
   const name = req.body.name;
   const id = uuid.v1();//根据时间戳生成随机id、
   const message = req.body.message;
-  const date = req.body.date
+  const date = req.body.date;
+  const email = req.body.email;
   console.log(name, message, date)
 
   pool.getConnection(function (err, connection) {
     if (err) console.log(err)
     new Promise((resolve, reject) => {
-      connection.query(sqls.insertMessageSql, [id, name, message, date], function (err, result) {
+      connection.query(sqls.insertMessageSql, [id, name, message, email, date], function (err, result) {
         if (err) {
           console.log('[INSERT ERROR]:', err.message);
           reject(err)

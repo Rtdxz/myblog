@@ -26,6 +26,7 @@ export default {
   },
   // 封装图片懒加载
   lazyload() {
+    console.log('lazyload');
     let img = document.getElementsByTagName("img");
     let len = img.length;
     let n = 0; // 存储图片加载到的位置，避免每次都从第一张图片开始遍历

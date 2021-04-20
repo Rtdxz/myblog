@@ -10,7 +10,7 @@ export function request(config) {
   instance.interceptors.request.use(config => {
     if (localStorage.token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
       config.headers.Authorization = `Bearer ${localStorage.token}`;//一定要Bearer开头，不然后台无法验证
-      console.log(localStorage.token)
+      // console.log(localStorage.token)
     }
     return config
   }, err => err);

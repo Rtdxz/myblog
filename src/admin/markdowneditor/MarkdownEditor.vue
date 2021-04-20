@@ -58,7 +58,13 @@
 </template>
 
 <script>
-import { request } from "@/network/request";
+import {
+  getAllArticles,
+  addTag,
+  getAllTags,
+  addImage,
+  addArticle,
+} from "@/network/network";
 
 export default {
   name: "MarkDownEditor",
@@ -97,10 +103,7 @@ export default {
   methods: {
     showTagBox() {
       let _this = this;
-      request({
-        url: "/api/article/getAllTags",
-        methods: "get",
-      }).then((res) => {
+      getAllArticles().then((res) => {
         console.log(res);
         _this.alltags = res.data.data;
 
@@ -118,18 +121,9 @@ export default {
     },
     addtag() {
       let _this = this;
-      request({
-        url: "/api/article/addTag",
-        method: "post",
-        data: {
-          tagname: _this.newtag,
-        },
-      }).then((res) => {
+      addTag({ tagname: _this.newtag }).then((res) => {
         console.log(res);
-        request({
-          url: "/api/article/getAllTags",
-          methods: "get",
-        }).then((res) => {
+        getAllTags().then((res) => {
           console.log(res);
           _this.alltags = res.data.data;
         });
@@ -185,12 +179,7 @@ export default {
       // 第一步.将图片上传到服务器.
       var formdata = new FormData();
       formdata.append("image", $file);
-      request({
-        url: "/api/article/add/images",
-        method: "post",
-        data: formdata,
-        headers: { "Content-Type": "multipart/form-data" },
-      }).then((res) => {
+      addImage(formdata).then((res) => {
         // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
         /**
          * $vm 指为mavonEditor实例，可以通过如下两种方式获取
@@ -209,11 +198,7 @@ export default {
       _this.article.date = this.timeFormatter(); //设置发布时间
       console.log(_this.article.date);
       _this.article.tags = this.currenttags;
-      request({
-        method: "post",
-        url: "/api/article/add",
-        data: _this.article,
-      }).then((res) => {
+      addArticle(_this.article).then((res) => {
         console.log(res);
         if (res.status == "200") {
           alert("submit sucess!");
@@ -261,62 +246,75 @@ export default {
 };
 </script>
 
-<style lang="sass" scoped>
-$blue-color: #409eff
+<style lang="scss" scoped>
+$blue-color: #409eff;
 
-.wrap
-  position: relative
-.span
-  height: 40px
-  line-height: 40px
-  text-align: center
+.wrap {
+  position: relative;
+}
 
-h1
-  padding-left: 40px
-  margin-bottom: 40px
+.span {
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+}
 
-.v-note-wrapper
+h1 {
+  padding-left: 40px;
+  margin-bottom: 40px;
+}
 
-  width: 97%
-  min-height: 500px
+.v-note-wrapper {
+  width: 97%;
+  min-height: 500px;
 
-  margin-top: 50px
-  margin-left: 40px
+  margin-top: 50px;
+  margin-left: 40px;
 
-  margin-bottom: 50px
-.tag-box
-  width: 476px
-  height: auto
+  margin-bottom: 50px;
+}
+.tag-box {
+  width: 476px;
+  height: auto;
 
-  position: absolute
-  left: 50%
-  top: 50%
-  transform: translate(-50%,-150%)
-  z-index: 99999
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -150%);
+  z-index: 99999;
+  .el-input {
+    width: 70%;
+    margin: 0 30px 20px 0;
+  }
+}
 
-  .el-input
-    width: 70%
-    margin: 0 30px 20px 0
-.tag
-  text-align: center
-  display: inline-block
-  width: auto
-  padding: 0 10px 0
-  height: 30px
-  line-height: 30px
-  background: transparent
-  border: 1px solid #ddd
-  font-size: 12px
-  color: #797979
-  border-radius: 2px
-  margin-right: 5px
-.tag:hover
-  background: lightblue
-  color: #ffffff
-  cursor: pointer
-.tagcontain
-  margin-bottom: 20px
-.tagclick
-  background: lightblue
-  color: #ffffff
+.tag {
+  text-align: center;
+  display: inline-block;
+  width: auto;
+  padding: 0 10px 0;
+  height: 30px;
+  line-height: 30px;
+  background: transparent;
+  border: 1px solid #ddd;
+  font-size: 12px;
+  color: #797979;
+  border-radius: 2px;
+  margin-right: 5px;
+}
+
+.tag:hover {
+  background: lightblue;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.tagcontain {
+  margin-bottom: 20px;
+}
+
+.tagclick {
+  background: lightblue;
+  color: #ffffff;
+}
 </style>
