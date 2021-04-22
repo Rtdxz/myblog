@@ -10,7 +10,7 @@
       >后台管理</el-header
     >
     <el-container>
-      <el-aside width="200px">
+      <el-aside width="200px" style="min-height: 94vh">
         <el-menu
           :default-active="activeIndex2"
           class="el-menu-vertical-demo"
@@ -67,39 +67,56 @@ export default {
 };
 </script>
 
-<style  lang="sass" scoped>
-$black-color: #545c64
-$blue-color: #409eff
+<style  lang="scss" scoped>
+$black-color: #545c64;
+$blue-color: #409eff;
 
-a
-  text-decoration: none
-  color: #fff
+a {
+  text-decoration: none;
+  color: #fff;
+}
 
-.el-menu
-  border-right: 0
+.el-menu-item,
+.el-submenu,
+.el-menu,
+.el-submenu__title .el-menu {
+  border-right: 0;
+}
 
-  &-item
-    text-align: center
+.back-button {
+  position: absolute;
+  left: 20px;
+  top: 10px;
+}
 
-.back-button
-  position: absolute
-  left: 20px
-  top: 10px
+.header {
+  position: relative;
+  width: 100%;
+  height: 60px;
+  text-align: center;
+  line-height: 60px;
+  color: #fff;
+  font-size: 20px;
+  background-color: $blue-color;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 12px 0px;
+}
+@media screen and (max-width: 800px) {
+  .el-menu-item,
+  .el-submenu,
+  .el-menu,
+  .el-submenu__title {
+    opacity: 1;
+    background-color: #545c64 !important;
+  }
+}
+li {
+  text-align: center;
+}
+.home-container {
+  height: 100%;
+}
 
-.header
-  position: relative
-  width: 100%
-  height: 60px
-  text-align: center
-  line-height: 60px
-  color: #fff
-  font-size: 20px
-  background-color: $blue-color
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 12px 0px
-
-.home-container
-  height: 100%
-
-.el-aside
-  background-color: $black-color
+.el-aside {
+  background-color: $black-color;
+}
 </style>

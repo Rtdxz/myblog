@@ -5,10 +5,13 @@
     <div class="nomore" v-if="isloading">
       <i class="el-icon-loading"></i>
     </div>
-    <el-button v-else-if="page * 10 < page_count" @click="loadData"
+    <el-button v-else-if="page * pageSize < page_count" @click="loadData"
       >点击加载更多</el-button
     >
-    <div class="nomore" v-else-if="page_count > 10 && page * 10 > page_count">
+    <div
+      class="nomore"
+      v-else-if="page_count > pageSize && page * pageSize > page_count"
+    >
       没有更多了...
     </div>
     <div class="error-content" v-else></div>
@@ -35,6 +38,7 @@ export default {
       articles: [],
       page: 0,
       page_count: 10,
+      pageSize: 5,
       title: "",
       isloading: true,
     };
@@ -71,6 +75,7 @@ export default {
 
         getArticlesByPage({
           page: this.page, //请求页数
+          pageSize: this.pageSize,
         })
           .then((res) => {
             // console.log(res.data.data, this.page);
@@ -110,6 +115,7 @@ export default {
         this.page += 1;
         console.log(this.page);
         params.page = this.page;
+        params.pageSize = this.pageSize;
         getArticlesByType(params)
           .then(
             (res) => {

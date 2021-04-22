@@ -11,12 +11,16 @@
         active-text-color="#ffd04b"
         :default-active="$route.path"
       >
-        <el-submenu class="hidden-md-and-up" index="/i">
+        <el-submenu
+          class="hidden-md-and-up"
+          index="/i"
+          :popper-append-to-body="false"
+        >
           <template slot="title"><i class="el-icon-s-unfold"></i></template>
           <el-menu-item index="/home" @click="moveToOtherPage('/home')"
             >首页</el-menu-item
           >
-          <el-submenu index="3">
+          <el-submenu index="3" :popper-append-to-body="false">
             <template slot="title">分类</template>
             <el-menu-item
               @click="moveToOtherPage('/home/category/' + category.classify)"
@@ -44,7 +48,7 @@
           >首页</el-menu-item
         >
         <el-submenu index="2" class="hidden-sm-and-down">
-          <template slot="title">分类</template>
+          <template slot="title" :popper-append-to-body="false">分类</template>
           <el-menu-item
             @click="moveToOtherPage('/home/category/' + category.classify)"
             index="'/home/categor/' + category.classify"
@@ -78,7 +82,12 @@
           @click="moveToOtherPage('/admin')"
           >个人中心</el-menu-item
         > -->
-        <el-submenu class="user-info" index="5" v-if="ifLogin">
+        <el-submenu
+          class="user-info"
+          index="5"
+          v-if="ifLogin"
+          :popper-append-to-body="false"
+        >
           <template slot="title">个人中心</template>
           <el-menu-item index="5-1" @click="moveToOtherPage('/admin')"
             >后台管理</el-menu-item
@@ -191,19 +200,12 @@ export default {
   min-height: 60px;
   border-bottom: none; /* 去除默认下边框 */
 }
-.el-menu--horizontal .el-menu {
-  opacity: 0.6 !important;
-}
+
 .el-menu /deep/ .el-icon-arrow-down {
   /* content: "1" !important; */
   display: none !important;
 }
 
-@media screen and (max-width: 996px) {
-  .el-menu {
-    border-bottom: none; /* 去除默认下边框 */
-  }
-}
 @media screen and (max-width: 800px) {
   .el-menu--horizontal {
     opacity: 1 !important;

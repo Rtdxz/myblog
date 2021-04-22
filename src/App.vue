@@ -3,11 +3,13 @@
     <el-backtop :bottom="60"></el-backtop>
     <Header v-if="!isAdmin"></Header>
     <transition name="fade-transform" mode="out-in">
-      <!-- <keep-alive> -->
-      <router-view />
-      <!-- </keep-alive> -->
+      <div class="c">
+        <keep-alive include="Home,Archive,About,Category">
+          <router-view />
+        </keep-alive>
+      </div>
     </transition>
-    <cloud-music-player></cloud-music-player>
+    <cloud-music-player class="hide-player"></cloud-music-player>
     <Footer v-if="!isAdmin"></Footer>
   </div>
 </template>
@@ -65,6 +67,10 @@ leave-to离场动画结束后的状态
   /* transform: translateX(30px); */
 }
 
+.c {
+  min-height: 70vh;
+}
+
 .nomore {
   width: 100%;
   text-align: center;
@@ -76,9 +82,11 @@ leave-to离场动画结束后的状态
   margin: 120px auto;
   min-height: 800px;
 }
+
 .el-menu--popup {
   opacity: 0.6;
 }
+
 .el-menu {
   transition: border-color 0.3s, background-color 0.3s, color 0.3s;
   transition-property: border-color, background-color, color;
@@ -86,6 +94,7 @@ leave-to离场动画结束后的状态
   transition-timing-function: ease, ease, ease;
   transition-delay: 0s, 0s, 0s;
 }
+
 @media screen and (max-width: 800px) {
   .el-menu-item,
   .el-submenu,
@@ -98,7 +107,7 @@ leave-to离场动画结束后的状态
 @media screen and (max-width: 800px) {
   .container {
     max-width: 95% !important;
-    margin: 90px auto;
+    margin: 40px auto;
   }
 }
 </style>

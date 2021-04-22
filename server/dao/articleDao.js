@@ -28,7 +28,7 @@ var getAllArticles = function (req, res) {
 
       result.forEach((ele, index) => {
         //ele.date = ele.date.toLocaleString();//将所有时间装化为标准时间
-        ele.date = ele.date.toLocaleString();//标准时间的年月日，没有具体时间
+        ele.date = ele.date.toLocaleString('zh');//标准时间的年月日，没有具体时间
       })
       // 调用 res.send() 方法，向客户端响应处理的结果
       res.send({
@@ -462,7 +462,7 @@ var getArticleById = function (req, res) {
       //数据库查询结果返回到result中
     }).then((result) => {
       let article = result[0];//由于只有一条结果，所以第0位即要查询的article
-      article.date = article.date.toLocaleString().slice(0, 9);//标准时间的年月日，没有具体时间
+      article.date = article.date.toLocaleString('zh').slice(0, 9);//标准时间的年月日，没有具体时间
       fs.readFile(article.content, function (err, data) {
         if (err) {
           console.log(err);

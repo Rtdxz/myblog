@@ -1,9 +1,9 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+// import Vue from 'vue'
+// import VueRouter from 'vue-router'
 
 
 //使用vuerouter里的install
-Vue.use(VueRouter);
+// Vue.use(VueRouter);
 
 
 
@@ -26,6 +26,8 @@ Vue.use(VueRouter);
 // import ErrorPage from '@/views/404'
 
 //懒加载
+
+
 const Content = () => import('@/components/content/Content')
 const Home = () => import('@/views/home/Home')
 const Category = () => import('@/views/category/Category')

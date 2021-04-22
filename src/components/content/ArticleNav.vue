@@ -1,5 +1,5 @@
 <template>
-  <div class="nav">
+  <div class="nav hide hidden-sm-and-down">
     <!-- <div
       v-for="title in titleArray"
       :key="title.text"
@@ -61,6 +61,7 @@ export default {
       } else {
         //二者均为0状态，有一者恒为0，另一者可能因为回到顶部等操作被置为0，便会出现这种状况
         this.anmita("body", anchorH);
+        this.anmita("document", anchorH);
       }
 
       //window.scrollTo(0,anchorH)  //若以上scrollTop方式不生效，可使用此scrollTo方式，但注意scrollTo在安卓手机上存在兼容性问题
@@ -140,11 +141,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@media screen and(max-width:780px) {
-  .nav {
-    opacity: 0;
-  }
-}
 .nav {
   position: fixed;
   bottom: 200px;

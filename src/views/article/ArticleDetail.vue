@@ -5,7 +5,7 @@
         <div class="article-header">
           <h1>{{ article.title }}</h1>
           <div class="info">
-            <span>{{ article.date }}</span>
+            <span style="font-size: 1em">{{ article.date }}</span>
           </div>
         </div>
         <div class="padding">
@@ -121,10 +121,9 @@ export default {
   background-color: #fff;
 }
 .article-header {
-  height: 60px;
   font-size: 20px;
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 1em;
 }
 
 /* 对v-html里的图片样式设置 */

@@ -5,7 +5,7 @@
       border="0"
       marginwidth="0"
       marginheight="0"
-      width="330"
+      width="300"
       height="110"
       src="//music.163.com/outchain/player?type=0&id=690960343&auto=0&height=90"
     ></iframe>
@@ -41,7 +41,7 @@ export default {
   position: fixed;
   left: 10px;
   bottom: 30px;
-  width: 342px;
+  width: 312px;
   height: 110px;
   transition: all 0.8s ease;
   overflow: hidden;
@@ -58,7 +58,6 @@ export default {
   line-height: 90px;
   text-align: center;
   cursor: pointer;
-  transition: all 0.8s ease;
 }
 .hidden-span {
   height: 110px !important;

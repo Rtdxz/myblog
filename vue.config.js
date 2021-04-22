@@ -1,15 +1,29 @@
+
+// 在vue-config.js 中加入
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
+const productionGzipExtensions = ['js', 'css'];
+const isProduction = process.env.NODE_ENV === 'production';
+
+
 module.exports = {
-  configureWebpack: {
-    plugins: [
-      new CompressionWebpackPlugin({
-        filename: '[path].gz[query]',
+
+  configureWebpack: config => {
+    if (isProduction) {
+      config.externals = {
+        'vue': 'Vue',
+        'vue-router': 'VueRouter',
+        'Element': 'element-ui',
+        axios: 'axios',
+        'vue-lazyload': 'VueLazyload',
+        "mavon-editor": "MavonEditor",
+      }
+      config.plugins.push(new CompressionWebpackPlugin({
         algorithm: 'gzip',
-        test: /\.(js|css)(\?.*)?$/i,
-        threshold: 10240, // 对超过10k的数据进行压缩
-        minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理
-        deleteOriginalAssets: false, // 删除原文件
-      }),
-    ],
-  },
+        test: new RegExp('\\.(' + productionGzipExtensions.join('|') + ')$'),
+        threshold: 10240,
+        minRatio: 0.8
+      }))
+
+    }
+  }
 }
