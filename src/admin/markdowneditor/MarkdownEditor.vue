@@ -89,7 +89,7 @@ export default {
       rules: {
         title: [
           { required: true, message: "请输入标题", trigger: "blur" },
-          { max: 10, message: "不得大于10字符", trigger: "blur" },
+          { max: 30, message: "不得大于30字符", trigger: "blur" },
         ],
         classify: [
           { required: true, message: "请选择分类", trigger: "change" },

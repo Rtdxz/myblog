@@ -7,14 +7,14 @@
 <script>
 import Type from "@/components/content/Type";
 export default {
-  name: "Category",
+  name: "Key",
   components: {
     Type,
   },
   directives: {},
   data() {
     return {
-      type: "category",
+      type: "key",
     };
   },
   created() {},

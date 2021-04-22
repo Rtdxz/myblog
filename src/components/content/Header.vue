@@ -19,8 +19,8 @@
           <el-submenu index="3">
             <template slot="title">分类</template>
             <el-menu-item
-              @click="moveToOtherPage('/categories/' + category.classify)"
-              index="'/categories/' + category.classify"
+              @click="moveToOtherPage('/home/category/' + category.classify)"
+              index="'/home/category/' + category.classify"
               v-for="category in categoryList"
               :key="category.classify"
               >{{ category.classify }}</el-menu-item
@@ -46,8 +46,8 @@
         <el-submenu index="2" class="hidden-sm-and-down">
           <template slot="title">分类</template>
           <el-menu-item
-            @click="moveToOtherPage('/categories/' + category.classify)"
-            index="'/categories/' + category.classify"
+            @click="moveToOtherPage('/home/category/' + category.classify)"
+            index="'/home/categor/' + category.classify"
             v-for="category in categoryList"
             :key="category.classify"
             >{{ category.classify }}</el-menu-item

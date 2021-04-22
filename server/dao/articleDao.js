@@ -140,7 +140,7 @@ var getArticlesByPage = function (req, res) {
         })
       })
     }).then(result => {
-      console.log(result)
+
       res.send({
         status: 0, // 0 表示处理成功。 1 表示处理失败
         msg: 'GET 请求成功！', // 状态的描述
@@ -261,7 +261,7 @@ var getArticleCount = function (req, res) {
       })
     }).then((result) => {
       // 调用 res.send() 方法，向客户端响应处理的结果
-      console.log(result)
+
       res.send({
         status: 0, // 0 表示处理成功。 1 表示处理失败
         msg: 'GET 请求成功！', // 状态的描述
@@ -282,6 +282,7 @@ var getArticleCount = function (req, res) {
 var getArticleCountByType = function (req, res) {
   const type = req.query.type;
   let param, sql;
+  console.log(type)
   if (type == 'tag') {
     const tag = req.query.tagname
     param = tag;
@@ -291,6 +292,12 @@ var getArticleCountByType = function (req, res) {
     const category = req.query.category;
     param = category;
     sql = sqls.searchArticleNumByClassifySql;
+  }
+  else if (type == 'key') {
+    const key = req.query.key;
+    param = key;
+    sql = sqls.searchArticlesNumByKeySql;
+
   }
   else {
     throw new Error('error type')
@@ -308,7 +315,7 @@ var getArticleCountByType = function (req, res) {
       })
     }).then((result) => {
       // 调用 res.send() 方法，向客户端响应处理的结果
-      console.log(result)
+
       res.send({
         status: 0, // 0 表示处理成功。 1 表示处理失败
         msg: 'GET 请求成功！', // 状态的描述
@@ -354,12 +361,14 @@ var getArticlesByType = function (req, res) {
       const pageSize = req.query.pageSize || 10;
       let start = pageSize * (pageNum - 1);
       let end = start + pageSize;
-      connection.query(sql, [param, start, end], function (err, result) {
+      console.log(start, end)
+      connection.query(sql, [param, start, 10], function (err, result) {
         if (err) {
-          console.log('ssssssssss')
+
           console.log('[SELECT ERROR]:', err.message);
           reject(err)
         }
+        console.log(result)
         resolve(result);
       })
     }).then(result => {
@@ -387,6 +396,7 @@ var getArticlesByType = function (req, res) {
         })
       })
     }).then(result => {
+
       res.status(200).send({
         status: 0, // 0 表示处理成功。 1 表示处理失败
         msg: 'GET 请求成功！', // 状态的描述
@@ -578,7 +588,7 @@ var getAllTags = function (req, res) {
       result.forEach(ele => {
         response.push(ele.tagname);
       })
-      console.log(response)
+
       // 调用 res.send() 方法，向客户端响应处理的结果
       res.send({
         status: 0, // 0 表示处理成功。 1 表示处理失败

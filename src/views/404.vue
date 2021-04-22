@@ -1,6 +1,8 @@
 <template>
   <div>
-    <h1>你的页面不在这哦！还有{{ time }}秒后跳回主页</h1>
+    <div class="container">
+      <h1>你的页面不在这哦！还有{{ time }}秒后跳回主页</h1>
+    </div>
   </div>
 </template>
 

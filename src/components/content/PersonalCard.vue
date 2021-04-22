@@ -51,7 +51,7 @@
           v-for="category in categoryList"
           :key="category.classify"
         >
-          <router-link :to="'/categories/' + category.classify"
+          <router-link :to="'/home/category/' + category.classify"
             >{{ category.classify }}
             <span>{{ category.sum }}</span></router-link
           >
@@ -67,8 +67,12 @@
     <div class="search">
       <div class="content-head">搜索</div>
       <div>
-        <el-input>
-          <el-button slot="append" icon="el-icon-search"></el-button
+        <el-input v-model="key">
+          <el-button
+            slot="append"
+            icon="el-icon-search"
+            @click="moveToSearchPage"
+          ></el-button
         ></el-input>
       </div>
     </div>
@@ -85,20 +89,12 @@ export default {
     Tag,
   },
   directives: {},
-  props: {
-    visitorVolume: {
-      type: Number,
-      default: 999,
-    },
-    articleCount: {
-      type: Number,
-      default: 999,
-    },
-  },
+  props: {},
   data() {
     return {
-      alltags: [1332, 2, 3, 4],
+      alltags: ["html", "js", "css", "es6"],
       categoryList: [],
+      key: "",
     };
   },
   created() {
@@ -108,17 +104,23 @@ export default {
   mounted() {},
   methods: {
     moveToOtherPage(target) {
-      this.$router.push("/tag/" + target);
+      this.$router.push("/home/tag/" + target);
+    },
+    moveToSearchPage() {
+      if (this.key == "") {
+        return;
+      }
+      this.$router.push("/home/key/" + this.key);
     },
     getCategoryList() {
       getCategoryList().then((res) => {
         this.categoryList = res.data.data;
-        console.log(this.categoryList);
+        // console.log(this.categoryList);
       });
     },
     getAllTags() {
       getAllTags().then((res) => {
-        console.log(res);
+        // console.log(res);
         this.alltags = res.data.data;
       });
     },
@@ -234,8 +236,6 @@ export default {
   }
 }
 .search {
-  .el-input {
-  }
   margin-bottom: 30px;
 }
 </style>

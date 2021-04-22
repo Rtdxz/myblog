@@ -216,7 +216,6 @@ router.post('/discussion/addMessage', (req, res) => {
   })
 })
 
-
 //查询某一类型中某一种类文章数量
 router.get('/article/getArticleCountByType', (req, res) => {
   const type = req.query.type;
@@ -397,6 +396,11 @@ router.get('/article/getArticlesByType', (req, res) => {
   else if (type == 'category') {
     const category = req.query.category;
     param = category;
+    sql = searchArticlesByClassifySql;
+  }
+  else if (type == 'key') {
+    const key = req.query.key;
+    param = key;
     sql = searchArticlesByClassifySql;
   }
   else {

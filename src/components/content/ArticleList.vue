@@ -36,8 +36,7 @@ export default {
     return {};
   },
   created() {
-    console.log(this.articles);
-
+    // console.log(this.articles);
     /* this.$axios
       .get("/api/test")
       .then((response) => {

@@ -4,20 +4,10 @@
     <Header v-if="!isAdmin"></Header>
     <transition name="fade-transform" mode="out-in">
       <!-- <keep-alive> -->
-
       <router-view />
       <!-- </keep-alive> -->
     </transition>
-    <iframe
-      class="musicplayer"
-      frameborder="no"
-      border="0"
-      marginwidth="0"
-      marginheight="0"
-      width="330"
-      height="110"
-      src="//music.163.com/outchain/player?type=0&id=690960343&auto=0&height=90"
-    ></iframe>
+    <cloud-music-player></cloud-music-player>
     <Footer v-if="!isAdmin"></Footer>
   </div>
 </template>
@@ -25,16 +15,18 @@
 <script>
 import Header from "@/components/content/Header";
 import Footer from "@/components/content/Footer";
+import CloudMusicPlayer from "@/components/common/CloudMusicPlayer";
 export default {
   name: "App",
   components: {
     Header,
     Footer,
+    CloudMusicPlayer,
   },
   computed: {
     isAdmin() {
-      console.log(this.$route);
-      return this.$route.path == "/admin" ? true : false;
+      // console.log(this.$route);
+      return this.$route.path.indexOf("/admin") != -1 ? true : false;
     },
   },
   data() {
@@ -50,11 +42,9 @@ export default {
 /* * {
   transition: ease-out 0.1s;
 } */
-.musicplayer {
-  position: fixed;
-  left: 10px;
-  bottom: 30px;
-}
+/* 可以设置不同的进入和离开动画 */
+/* 设置持续时间和动画函数 */
+
 .fade-transform-leave-active,
 .fade-transform-enter-active {
   transition: all linear 0.3s;
@@ -82,7 +72,7 @@ leave-to离场动画结束后的状态
   line-height: 30px;
 }
 .container {
-  max-width: 80%;
+  max-width: 70%;
   margin: 120px auto;
   min-height: 800px;
 }

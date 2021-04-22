@@ -39,6 +39,10 @@ var searchArticleTagsSql = 'SELECT tagname FROM tagrelate WHERE articleid=? '
 var searchArticlesByTagSql = 'SELECT * FROM article WHERE id in(SELECT articleid from tagrelate WHERE tagname=?) ORDER BY date DESC LIMIT ?, ?'
 //查询标签对应数量文章
 var searchArticleNumByTagSql = 'SELECT count(*) FROM tagrelate  WHERE tagname=? GROUP BY tagname'
+//模糊搜索相关文章
+var searchArticlesByKeySql = 'SELECT * FROM article  WHERE title LIKE "%"?"%" ORDER BY date DESC LIMIT ?, ?'
+//模糊搜索相关文章的数量
+var searchArticlesNumByKeySql = 'SELECT count(*) FROM article WHERE title LIKE "%"?"%"'
 
 module.exports = {
 
@@ -81,4 +85,8 @@ module.exports = {
   searchArticlesByTagSql
   ,
   searchArticleNumByTagSql
+  ,
+  searchArticlesByKeySql
+  ,
+  searchArticlesNumByKeySql
 }

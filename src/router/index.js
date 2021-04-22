@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+
 //使用vuerouter里的install
 Vue.use(VueRouter);
 
@@ -25,12 +26,18 @@ Vue.use(VueRouter);
 // import ErrorPage from '@/views/404'
 
 //懒加载
-const Home = () => import('@/views/home/Home');
+const Content = () => import('@/components/content/Content')
+const Home = () => import('@/views/home/Home')
+const Category = () => import('@/views/category/Category')
+const Tag = () => import('@/views/tag/Tag')
+const Key = () => import('@/views/key/Key')
 const Message = () => import('@/views/message/Message')
 const About = () => import('@/views/about/About')
 const Archive = () => import('@/views/archive/Archive')
-const Category = () => import('@/views/category/Category')
-const Tag = () => import('@/views/tag/Tag')
+
+// const Home = () => import('@/views/home/Home');
+// const Category = () => import('@/views/category/Category')
+// const Tag = () => import('@/views/tag/Tag')
 
 const Admin = () => import('@/admin/adminindex/Admin')
 const Markdown = () => import('@/admin/markdowneditor/MarkdownEditor')
@@ -52,9 +59,34 @@ const routes = [
     path: '',
     redirect: '/home'
   },
+  // {
+  //   path: '/home',
+  //   component: Home,
+
+  // },
   {
     path: '/home',
-    component: Home
+    component: Content,
+
+    children: [
+      {
+        path: '',
+        component: Home
+      },
+      {
+        path: 'category/:category',
+        component: Category
+      },
+
+      {
+        path: 'tag/:tagname',
+        component: Tag
+      },
+      {
+        path: 'key/:key',
+        component: Key
+      }
+    ]
   },
   {
     path: '/message',
@@ -90,14 +122,14 @@ const routes = [
     path: '/article/:articleId',
     component: ArticleDetail
   },
-  {
-    path: '/categories/:category',
-    component: Category
-  },
-  {
-    path: '/tag/:tagname',
-    component: Tag
-  },
+  // {
+  //   path: '/categories/:category',
+  //   component: Category
+  // },
+  // {
+  //   path: '/tag/:tagname',
+  //   component: Tag
+  // },
   {
     path: '/login',
     component: Login
@@ -130,4 +162,19 @@ router.beforeEach((to, from, next) => {
   }
 
 });
+router.afterEach((to, from, next) => {
+  if (to.path.indexOf('/article') != -1) {
+    setTimeout(() => {
+      document.body.scrollTop = 0;
+
+      document.documentElement.scrollTop = 0;
+    }, 100);
+  }
+});
+
+const VueRouterPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(to) {
+  return VueRouterPush.call(this, to).catch(err => err)
+}
+
 export default router

@@ -10,7 +10,7 @@
         <i class="el-icon-date"></i> {{ article.date
         }}<!-- 时间 -->
         <span class="tag" v-for="tag in article.tags" :key="tag"
-          ><router-link :to="'/tag/' + tag">{{ tag }}</router-link></span
+          ><router-link :to="'/home/tag/' + tag">{{ tag }}</router-link></span
         >
       </div>
       <el-main><p v-text="article.describes"></p> </el-main>

@@ -1,18 +1,15 @@
-'use strict'
+const CompressionWebpackPlugin = require('compression-webpack-plugin');
 module.exports = {
-  devServer: {
-    host: '0.0.0.0', // 允许外部ip访问
-    port: 9080, // 端口
-    https: false, // 启用https
-    proxy: {
-      '/api': {
-        target: 'https://music.163.com',
-        changeOrigin: true,
-        secure: false,
-        pathRewrite: {
-          '^/api': ''
-        }
-      }
-    }
-  }
+  configureWebpack: {
+    plugins: [
+      new CompressionWebpackPlugin({
+        filename: '[path].gz[query]',
+        algorithm: 'gzip',
+        test: /\.(js|css)(\?.*)?$/i,
+        threshold: 10240, // 对超过10k的数据进行压缩
+        minRatio: 0.8, // 只有压缩率小于这个值的资源才会被处理
+        deleteOriginalAssets: false, // 删除原文件
+      }),
+    ],
+  },
 }
